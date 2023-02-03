@@ -1,0 +1,12 @@
+- create and name sets
+- list of cards with term/def or qns/ans in set
+- shuffled flashcard mode with animated card flips
+- store cards/sets in document db (try aws)
+
+Landing Page:
+- list of card sets
+- Option to add/delete sets
+- search bar
+- Random set picker (optional)
+- Adding tags/labels (optional)
+- Filters for tags/labels (optional)
