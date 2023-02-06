@@ -1,0 +1,15 @@
+.card-set-list {
+    position: relative;
+    width: 100%;
+    margin-top: 1rem;
+    padding-top: 3rem;
+}
+
+.card-set-list-items {
+    display: flex !important;
+    justify-content: space-between;
+};
+
+.test {
+    font-size: 2rem !important;
+}

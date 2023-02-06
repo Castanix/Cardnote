@@ -1,8 +1,11 @@
 import React from "react";
+import CardSetList from "../../components/CardSetList/CardSetList";
 
 const Landing = () => {
 	return (
-		<div>Landing</div>
+		<main className="page-margin">
+			<CardSetList />
+		</main>
 	);
 };
 
