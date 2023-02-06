@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.page-margin {
+  margin: auto;
+  width: 80%;
+}
+
+.divider-inline * {
+  margin-inline: 0.25rem;
+}
+
+@media screen and (max-width: 600px) {
+  .page-margin {
+    margin: auto;
+    width: 100%;
+  }
+}
