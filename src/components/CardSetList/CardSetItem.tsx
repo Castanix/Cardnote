@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import { ListGroupItemHeading, ListGroupItemText, Button, Input, Toast, ToastBody, ToastHeader, Badge } from "reactstrap";
 import { CardSetType } from "./CardSetList";
 
-const CardSetItemState = ({ id, cardSets, setCardSets }: { id: string, cardSets: CardSetType[], setCardSets: React.Dispatch<React.SetStateAction<CardSetType[]>> }) => {
-	const setIndex = cardSets.findIndex(set => set._id === id);
+/*
+* Set item component for CardSetList. Contains state of each item in the list including editing and deleting
+*
+* _id: unique identifier of each item in the list, used here specifically to find index in cardSets
+* cardSets: contains overall set list data
+* setCardSets: State dispatch function for cardSets
+*/
+const CardSetItem = ({ _id, cardSets, setCardSets }: { _id: string, cardSets: CardSetType[], setCardSets: React.Dispatch<React.SetStateAction<CardSetType[]>> }) => {
+	const setIndex = cardSets.findIndex(set => set._id === _id);
 	const set = cardSets[setIndex];
 	const [editable, setEditable] = useState<boolean>(false);
 	const [nameValue, setNameValue] = useState<string>(set ? set.name : "");
@@ -75,6 +82,7 @@ const CardSetItemState = ({ id, cardSets, setCardSets }: { id: string, cardSets:
 						onClick={() => setDeleteShow(!deleteShow)}
 					>Delete Set</Button>
 				</div>
+
 				<Toast isOpen={deleteShow} style={{position: "absolute", right: 0, zIndex: 1}}>
 					<ToastHeader 
 						icon="warning" 
@@ -99,4 +107,4 @@ const CardSetItemState = ({ id, cardSets, setCardSets }: { id: string, cardSets:
 		: null;
 };
 
-export default CardSetItemState;
+export default CardSetItem;
