@@ -20,6 +20,8 @@ const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configurat
 			if (i > 0 && i <= maxPage) {
 				paginationArr.push(
 					<PaginationItem 
+						key={i}
+						title={`page ${i}`}
 						active={ i === pageNumber }
 						onClick={ () => setPageNumber(i) }
 					>
@@ -36,14 +38,14 @@ const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configurat
 
 	return (
 		<Pagination>
-			<PaginationItem disabled={ pageNumber === 1 }>
+			<PaginationItem title="first" disabled={ pageNumber === 1 }>
 				<PaginationLink 
 					first
 					onClick={ () => setPageNumber(1) }
 				/>
 			</PaginationItem>
 
-			<PaginationItem disabled={ pageNumber === 1 }>
+			<PaginationItem title="prev" disabled={ pageNumber === 1 }>
 				<PaginationLink 
 					previous
 					onClick={ () => setPageNumber(pageNumber - 1) }
@@ -52,14 +54,14 @@ const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configurat
 
 			{setPagination()}
 			
-			<PaginationItem disabled={ pageNumber === maxPage }>
+			<PaginationItem title="next" disabled={ pageNumber === maxPage }>
 				<PaginationLink 
 					next
 					onClick={ () => setPageNumber(pageNumber + 1) }
 				/>
 			</PaginationItem>
 
-			<PaginationItem disabled={ pageNumber === maxPage }>
+			<PaginationItem title="last" disabled={ pageNumber === maxPage }>
 				<PaginationLink 
 					last
 					onClick={ () => setPageNumber(maxPage) }
