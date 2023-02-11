@@ -16,7 +16,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage",
+    "test": "react-scripts test",
+    "testCoverage": "react-scripts test --coverage",
     "eject": "react-scripts eject",
     "lint": "npx eslint .",
     "lintFix": "npx eslint . --fix"
