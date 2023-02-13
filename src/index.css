@@ -16,13 +16,22 @@ code {
     monospace;
 }
 
+a {
+  color: black !important;
+  text-decoration: none !important;
+}
+
 .page-margin {
   margin: auto;
   width: 80%;
 }
 
-.divider-inline * {
-  margin-inline: 0.25rem;
+.divider-inline > * {
+  margin-inline: 0.25rem !important;
+}
+
+.divider-block > * {
+  margin-block: 0.25rem !important;
 }
 
 @media screen and (max-width: 600px) {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ListGroupItemHeading, ListGroupItemText, Button, Input, Toast, ToastBody, ToastHeader, Badge } from "reactstrap";
 import { CardSetType } from "./CardSetList";
+import { Link } from "react-router-dom";
 
 /*
 * Set item component for CardSetList. Contains state of each item in the list including editing and deleting
@@ -17,6 +18,26 @@ const CardSetItem = ({ _id, cardSets, setCardSets }: { _id: string, cardSets: Ca
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
 	const [descriptionValue, setDescriptionValue] = useState<string>(set ? set.description : "");
 
+	/* Component functions */
+	const editCardSetHandler = () => {
+		if (editable && nameValue) {
+			const newSet = [...cardSets];
+			set.name = nameValue;
+			set.description = descriptionValue;
+			newSet[setIndex] = set;
+			setCardSets(newSet);
+			setEditable(false);
+		} else {
+			setEditable(true);
+		}
+	};
+
+	const deleteHandler = (isDelete: boolean) => {
+		if (isDelete) setCardSets(cardSets.filter(setFilter => setFilter !== set));
+		setDeleteShow(false);
+	};
+
+	/* Rendered component */
 	return set
 		? <div className="card-set-list-items">
 			<div>
@@ -27,7 +48,7 @@ const CardSetItem = ({ _id, cardSets, setCardSets }: { _id: string, cardSets: Ca
 								value={nameValue} 
 								onChange={e => setNameValue(e.target.value)}
 							/>
-							: set.name
+							: <Link to={`/${set.name}`} title={`Navigate to ${set.name}`}>{set.name}</Link>
 						}
 						<Badge>
 							{set.numCards} cards in set
@@ -55,18 +76,7 @@ const CardSetItem = ({ _id, cardSets, setCardSets }: { _id: string, cardSets: Ca
 						size="sm"
 						color="secondary"
 						outline
-						onClick={() => {
-							if (editable) {
-								const newSet = [...cardSets];
-								set.name = nameValue;
-								set.description = descriptionValue;
-								newSet[setIndex] = set;
-								setCardSets(newSet);
-								setEditable(false);
-							} else {
-								setEditable(true);
-							}
-						}}
+						onClick={editCardSetHandler}
 					>{editable ? "Confirm edit" : "Edit Set"}</Button>
 					<Button
 						size="sm"
@@ -91,13 +101,10 @@ const CardSetItem = ({ _id, cardSets, setCardSets }: { _id: string, cardSets: Ca
 					<ToastBody>
 						<div className="divider-inline">
 							<Button 
-								onClick={() => {
-									setCardSets(cardSets.filter(setFilter => setFilter !== set));
-									setDeleteShow(false);
-								}}
+								onClick={() => deleteHandler(true)}
 							>Ok</Button>
 							<Button
-								onClick={() => setDeleteShow(false)}
+								onClick={() => deleteHandler(false)}
 							>Cancel</Button>
 						</div>
 					</ToastBody>

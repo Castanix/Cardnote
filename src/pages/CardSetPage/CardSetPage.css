@@ -1,0 +1,8 @@
+.home-button {
+    text-decoration: underline;
+}
+
+.title-body {
+    display: flex;
+    justify-content: space-between;
+}

@@ -32,10 +32,10 @@ const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configurat
 				);
 			}
 		}
-
 		return paginationArr;
 	};
 
+	/* Rendered component */
 	return (
 		<Pagination>
 			<PaginationItem title="first" disabled={ pageNumber === 1 }>

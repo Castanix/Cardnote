@@ -6,8 +6,6 @@ import CardSetListPagination from "./CardSetListPagination";
 
 import "./CardSetList.css";
 
-
-
 export type CardSetType = {
 	_id: string,
 	name: string,
@@ -155,6 +153,7 @@ const CardSetList = () => {
 	const [pageNumber, setPageNumber] = useState<number>(1);
 	const debounceQuery = getDebounceQuery(searchValue ?? "");
 	
+	/* Use effects */
 	useEffect(() => {
 		// Reset all list states before debounceQuery triggers to prevent unwanted displays
 		setPageNumber(1);
@@ -175,8 +174,21 @@ const CardSetList = () => {
 		};
 	}, [alertCount]);
 
+	/* Component functions */
 	const toggle = () => setIsTooltipOpen(!isTooltipOpen);
 
+	const addSetHandler = () => {
+		setCardSets([
+			{
+				_id: `id${cardSets.length+1}`,
+				name: "Add name", 
+				description: "Add description", 
+				numCards: 0
+			}, ...cardSets]);
+		setAlertCount(alertCount + 1);
+	};
+
+	/* Rendered component */
 	return (
 		<section className="card-set-list">
 			
@@ -204,16 +216,7 @@ const CardSetList = () => {
 					id="add-set-button"
 					action
 					style={{ textAlign: "center" }}
-					onClick={() => {
-						setCardSets([
-							{
-								_id: `id${cardSets.length+1}`,
-								name: "Add name", 
-								description: "Add description", 
-								numCards: 0
-							}, ...cardSets]);
-						setAlertCount(alertCount + 1);
-					}}
+					onClick={addSetHandler}
 				>
 					<BsPlusCircle style={{ fontSize: "4rem" }} />
 					<Tooltip
