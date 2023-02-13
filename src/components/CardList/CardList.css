@@ -1,0 +1,9 @@
+.card-item {
+    min-height: 4rem;
+    height: fit-content;
+}
+
+.card-item .list-group-item {
+    width: 50%;
+    text-align: center;
+}
