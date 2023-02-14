@@ -20,13 +20,13 @@ const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configurat
 			if (i > 0 && i <= maxPage) {
 				paginationArr.push(
 					<PaginationItem 
-						key={i}
+						key={ i }
 						title={`page ${i}`}
 						active={ i === pageNumber }
 						onClick={ () => setPageNumber(i) }
 					>
 						<PaginationLink onClick={ () => setPageNumber(i) }>
-							{i}
+							{ i }
 						</PaginationLink>
 					</PaginationItem>
 				);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, ReactNode, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Card, CardBody, CardHeader, CardSubtitle, CardTitle } from "reactstrap";
 import AddCardForm from "../../components/CardList/AddCardForm";
@@ -10,6 +10,11 @@ export type CardType = {
 	_id: string,
 	term: string,
 	definition: string,
+};
+
+type CardSetContextType = {
+	cardSet: CardType[],
+	setCardSet: React.Dispatch<React.SetStateAction<CardType[]>>
 };
 
 
@@ -51,14 +56,25 @@ const mockedList: CardType[] = [
 	},
 ];
 
+export const CardSetContext = createContext<CardSetContextType | null>(null);
+
+const CardSetContextProvider = ({ children }: { children: ReactNode }) => {
+	const [cardSet, setCardSet] = useState<CardType[]>(mockedList);
+
+	return (
+		<CardSetContext.Provider value={{ cardSet, setCardSet }}>
+			{ children }
+		</CardSetContext.Provider>
+	);
+};
+
 const CardSetPage = () => {
-	const { cardSetId } = useParams();
-	const [ cardSet, setCardSet ] = useState<CardType[]>(mockedList);
+	const { cardSetId } = useParams();	
 
 	return (
 		<main className="page-margin">
-			<Card>
-				<CardHeader><Link to="/">{"<- "}<u>Back to home</u></Link></CardHeader>
+			<Card className="card-set-page">
+				<CardHeader><Link to="/">{ "<- " }<span className="hoverable-link">Back to home</span></Link></CardHeader>
 				<div className="divider-block">
 					<CardBody className="title-body">
 						<div>
@@ -69,14 +85,18 @@ const CardSetPage = () => {
 								Description
 							</CardSubtitle>
 						</div>
-						<Button>Start flashcards</Button>
+						<div className="flashcard-button">
+							<Button outline color="primary">Flashcards</Button>
+						</div>
 					</CardBody>
-					<CardBody className="add-card-body">
-						<AddCardForm cardSet={cardSet} setCardSet={setCardSet} />
-					</CardBody>
-					<CardBody className="card-list-body">
-						<CardList cardSet={cardSet} />
-					</CardBody>
+					<CardSetContextProvider>
+						<CardBody className="add-card-body">
+							<AddCardForm />
+						</CardBody>
+						<CardBody className="card-list-body">
+							<CardList />
+						</CardBody>
+					</CardSetContextProvider>
 				</div>
 			</Card>
 		</main>

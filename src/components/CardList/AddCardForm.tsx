@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Row, Col, FormGroup, Label, Input, Accordion, AccordionHeader, AccordionBody, AccordionItem, Button } from "reactstrap";
-import { CardType } from "../../pages/CardSetPage/CardSetPage";
+import { CardSetContext } from "../../pages/CardSetPage/CardSetPage";
 
-const AddCardForm = ({ cardSet, setCardSet }: { cardSet: CardType[], setCardSet: React.Dispatch<React.SetStateAction<CardType[]>>}) => {
+const AddCardForm = () => {
 	const [open, setOpen] = useState<string>("1");
 	const [termValue, setTermValue] = useState<string>();
 	const [definitionValue, setDefinitionValue] = useState<string>();
+
+	const { cardSet, setCardSet } = useContext(CardSetContext);
 
 	const toggle = () => {
 		if (open === "1") {
@@ -28,13 +30,13 @@ const AddCardForm = ({ cardSet, setCardSet }: { cardSet: CardType[], setCardSet:
 	};
 
 	return (
-		<Accordion open={open}>
+		<Accordion open={ open }>
 			<AccordionItem>
-				<AccordionHeader targetId="1" onClick={() => toggle()}>Add card</AccordionHeader>
+				<AccordionHeader targetId="1" onClick={ () => toggle() }>Add card</AccordionHeader>
 				<AccordionBody accordionId="1">
 					<Form>
 						<Row>
-							<Col md={6}>
+							<Col md={ 6 }>
 								<FormGroup className="divider-block">
 									<div>
 										<Label for="cardTerm">
@@ -44,14 +46,18 @@ const AddCardForm = ({ cardSet, setCardSet }: { cardSet: CardType[], setCardSet:
 											id="cardTerm" 
 											name="cardTerm" 
 											placeholder="Enter Term"
-											value={termValue}
-											onChange={(e) => setTermValue(e.target.value)}
+											value={ termValue }
+											onChange={ (e) => setTermValue(e.target.value) }
 										/>
 									</div>
-									<Button onClick={addCardHandler}>Add card</Button>
+									<Button 
+										onClick={ addCardHandler } 
+										outline 
+										color="primary"
+									>Add card</Button>
 								</FormGroup>
 							</Col>
-							<Col md={6}>
+							<Col md={ 6 }>
 								<FormGroup>
 									<Label for="cardDefinition">
 										Definition: 
@@ -61,8 +67,8 @@ const AddCardForm = ({ cardSet, setCardSet }: { cardSet: CardType[], setCardSet:
 										name="cardDefinition" 
 										type="textarea" 
 										placeholder="Enter Definition"
-										value={definitionValue}
-										onChange={(e) => setDefinitionValue(e.target.value)}
+										value={ definitionValue }
+										onChange={ (e) => setDefinitionValue(e.target.value) }
 									/>
 								</FormGroup>
 							</Col>

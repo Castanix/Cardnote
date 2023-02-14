@@ -34,6 +34,11 @@ a {
   margin-block: 0.25rem !important;
 }
 
+.hoverable-link:hover,
+.hoverable-link:focus {
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 600px) {
   .page-margin {
     margin: auto;

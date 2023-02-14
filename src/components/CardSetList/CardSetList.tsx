@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Badge, Input, ListGroup, ListGroupItem, Tooltip } from "reactstrap";
 import { BsPlusCircle } from "react-icons/bs";
-import CardSetItem from "./CardSetItem";
+import CardSetListItem from "./CardSetListItem";
 import CardSetListPagination from "./CardSetListPagination";
 
 import "./CardSetList.css";
@@ -180,7 +180,7 @@ const CardSetList = () => {
 	const addSetHandler = () => {
 		setCardSets([
 			{
-				_id: `id${cardSets.length+1}`,
+				_id: `id${ cardSets.length+1 }`,
 				name: "Add name", 
 				description: "Add description", 
 				numCards: 0
@@ -192,18 +192,18 @@ const CardSetList = () => {
 	return (
 		<section className="card-set-list">
 			
-			<Alert isOpen={alertCount > 0} style={{position: "absolute", width: "100%", top: 0}}>
+			<Alert isOpen={ alertCount > 0 } style={{ position: "absolute", width: "100%", top: 0 }}>
 				<div className="divider-inline">
 					A new set has been added! 
 					<Badge>
-						{alertCount}
+						{ alertCount }
 					</Badge>
 				</div>
 			</Alert>
 			<div className="searchbar">
 				<Input 
 					placeholder="Search set" 
-					value={searchValue} 
+					value={ searchValue } 
 					onChange={e => {
 						setSearchValue(e.target.value);
 					}}
@@ -216,24 +216,24 @@ const CardSetList = () => {
 					id="add-set-button"
 					action
 					style={{ textAlign: "center" }}
-					onClick={addSetHandler}
+					onClick={ addSetHandler }
 				>
 					<BsPlusCircle style={{ fontSize: "4rem" }} />
 					<Tooltip
 						placement="bottom"
-						isOpen={isTooltipOpen}
+						isOpen={ isTooltipOpen }
 						target="add-set-button"
-						toggle={toggle}
+						toggle={ toggle }
 					>Add set</Tooltip>
 				</ListGroupItem>
-				{searchedSets.slice((pageNumber-1)*4, pageNumber*4).map(set =>
+				{ searchedSets.slice((pageNumber-1)*4, pageNumber*4).map(set =>
 					<ListGroupItem key={set._id}>
-						<CardSetItem _id={set._id} cardSets={cardSets} setCardSets={setCardSets} />
-					</ListGroupItem>
-				)}
+						<CardSetListItem set={set} cardSets={cardSets} setCardSets={setCardSets} />
+					</ListGroupItem>)
+				}
 			</ListGroup>
 			<div style={{ width: "fit-content", margin: "auto" }}>
-				<CardSetListPagination setCount={searchedSets.length} pageNumber={pageNumber} setPageNumber={setPageNumber} />
+				<CardSetListPagination setCount={ searchedSets.length } pageNumber={ pageNumber } setPageNumber={ setPageNumber } />
 			</div>
 		</section>
 	);
