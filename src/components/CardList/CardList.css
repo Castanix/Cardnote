@@ -3,7 +3,16 @@
     height: fit-content;
 }
 
-.card-item .list-group-item {
+.card-term,
+.card-definition {
     width: 50%;
     text-align: center;
+}
+
+.card-toolbar {
+    width: fit-content;
+}
+
+.card-toolbar button {
+    width: 100%;
 }

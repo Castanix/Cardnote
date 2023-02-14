@@ -1,8 +1,16 @@
-.home-button {
-    text-decoration: underline;
-}
-
 .title-body {
     display: flex;
     justify-content: space-between;
+}
+
+.flashcard-button {
+    height: 24px;
+}
+
+@media screen and (max-width: 840px) {
+    .card-set-page button {
+        font-size: 0.5rem;
+        padding-inline: 6px;
+        padding-block: 3px;
+    }
 }

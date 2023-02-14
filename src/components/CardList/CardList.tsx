@@ -1,22 +1,13 @@
-import React, { useState } from "react";
-import { Accordion, AccordionBody, AccordionHeader, AccordionItem, ListGroup, ListGroupItem } from "reactstrap";
-import { CardType } from "../../pages/CardSetPage/CardSetPage";
+import React, { useContext, useState } from "react";
+import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Badge } from "reactstrap";
+import { CardSetContext } from "../../pages/CardSetPage/CardSetPage";
 
 import "./CardList.css";
+import CardListItem from "./CardListItem";
 
-const createCard = (card: CardType) => 
-	<ListGroup className="card-item divider-block" horizontal key={card._id}>
-		<ListGroupItem className="card-term">
-			{card.term}
-		</ListGroupItem>
-		<ListGroupItem className="card-definition">
-			{card.definition}
-		</ListGroupItem>
-	</ListGroup>;
-
-
-const CardList = ({ cardSet }: { cardSet: CardType[] }) => {
+const CardList = () => {
 	const [open, setOpen] = useState<string>("1");
+	const { cardSet } = useContext(CardSetContext);
 
 	const toggle = () => {
 		if (open === "1") {
@@ -27,14 +18,23 @@ const CardList = ({ cardSet }: { cardSet: CardType[] }) => {
 	};
 
 	return (
-		<Accordion open={open}>
-			<AccordionItem>
-				<AccordionHeader targetId="1" onClick={() => toggle()}>Card set</AccordionHeader>
-				<AccordionBody accordionId="1">
-					{cardSet.map(card => createCard(card))}
-				</AccordionBody>
-			</AccordionItem>
-		</Accordion>
+		<div>
+			{ cardSet.length 
+				? <Accordion open={ open }>
+					<AccordionItem>
+						<AccordionHeader targetId="1" onClick={ () => toggle() }>
+							<div>
+								Card set <Badge>{ cardSet.length }</Badge>
+							</div>
+						</AccordionHeader>
+						<AccordionBody accordionId="1">
+							{ cardSet.map(card => <CardListItem key={card._id} card={card}/>) }
+						</AccordionBody>
+					</AccordionItem>
+				</Accordion>
+				: null
+			}
+		</div>
 	);
 };
 
