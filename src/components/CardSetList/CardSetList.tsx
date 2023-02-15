@@ -13,6 +13,7 @@ export type CardSetType = {
 	numCards: number,
 };
 
+
 // Mocked sets data
 const mockList: CardSetType[] = [
 	{
@@ -125,7 +126,8 @@ const mockList: CardSetType[] = [
 	},
 ];
 
-// Delays the search filter for sets so application is not overloaded with re-renders
+
+/* Function to delay the search filter for sets to prevent overloading with re-renders */
 const getDebounceQuery = (value: string, time = 250) => {
 	const [debounceValue, setDebounceValue] = useState<string>(value);
 
@@ -140,9 +142,10 @@ const getDebounceQuery = (value: string, time = 250) => {
 	return debounceValue.toLowerCase();
 };
 
+
 /*
-* List component containing all card set data.
-* It is the main component rendered for the landing page.
+* List component containing all card sets.
+* It is the main component rendered for the CardSetListPage.tsx.
 */
 const CardSetList = () => {
 	const [cardSets, setCardSets] = useState<CardSetType[]>(mockList);
@@ -153,6 +156,7 @@ const CardSetList = () => {
 	const [pageNumber, setPageNumber] = useState<number>(1);
 	const debounceQuery = getDebounceQuery(searchValue ?? "");
 	
+
 	/* Use effects */
 	useEffect(() => {
 		// Reset all list states before debounceQuery triggers to prevent unwanted displays
@@ -174,6 +178,7 @@ const CardSetList = () => {
 		};
 	}, [alertCount]);
 
+
 	/* Component functions */
 	const toggle = () => setIsTooltipOpen(!isTooltipOpen);
 
@@ -187,6 +192,7 @@ const CardSetList = () => {
 			}, ...cardSets]);
 		setAlertCount(alertCount + 1);
 	};
+
 
 	/* Rendered component */
 	return (

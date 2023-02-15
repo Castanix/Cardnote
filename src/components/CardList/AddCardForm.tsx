@@ -2,18 +2,25 @@ import React, { useContext, useState } from "react";
 import { Form, Row, Col, FormGroup, Label, Input, Accordion, AccordionHeader, AccordionBody, AccordionItem, Button } from "reactstrap";
 import { CardSetContext } from "../../pages/CardSetPage/CardSetPage";
 
-const AddCardForm = () => {
-	const [open, setOpen] = useState<string>("1");
-	const [termValue, setTermValue] = useState<string>();
-	const [definitionValue, setDefinitionValue] = useState<string>();
 
+/*
+* Form component for adding cards to the card set.
+* It one of the main components rendered for CardSetPage.tsx.
+*/
+const AddCardForm = () => {
 	const { cardSet, setCardSet } = useContext(CardSetContext);
 
-	const toggle = () => {
-		if (open === "1") {
+	const [open, setOpen] = useState<string>("1");
+	const [termValue, setTermValue] = useState<string>("");
+	const [definitionValue, setDefinitionValue] = useState<string>("");
+
+
+	/* Component functions */
+	const toggle = (accordionId: string) => {
+		if (open === accordionId) {
 			setOpen("");
 		} else {
-			setOpen("1");
+			setOpen(accordionId);
 		}
 	};
 
@@ -29,10 +36,15 @@ const AddCardForm = () => {
 		}
 	};
 
+	
+	/* Rendered component */
 	return (
-		<Accordion open={ open }>
+		<Accordion open={ open } {...{
+			toggle: (accordionId: string) =>
+				toggle(accordionId)
+		}}>
 			<AccordionItem>
-				<AccordionHeader targetId="1" onClick={ () => toggle() }>Add card</AccordionHeader>
+				<AccordionHeader targetId="1">Add card</AccordionHeader>
 				<AccordionBody accordionId="1">
 					<Form>
 						<Row>

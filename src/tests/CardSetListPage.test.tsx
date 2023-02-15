@@ -1,14 +1,15 @@
 import { render, screen } from "@testing-library/react";
-import CardSetList from "../components/CardSetList/CardSetList";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
+import { BrowserRouter } from "react-router-dom";
+import CardSetListPage from "../pages/CardSetListPage/CardSetListPage";
 
 let document: HTMLElement;
 let user: UserEvent;
 
 beforeEach(() => {
-	document = render(<CardSetList />).container;
+	document = render(<CardSetListPage />, { wrapper: BrowserRouter }).container;
 	user = userEvent.setup();
 });
 

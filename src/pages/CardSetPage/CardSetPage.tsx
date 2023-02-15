@@ -18,6 +18,7 @@ type CardSetContextType = {
 };
 
 
+/* Mocked set data */
 const mockedList: CardType[] = [
 	{
 		_id: "1",
@@ -56,9 +57,10 @@ const mockedList: CardType[] = [
 	},
 ];
 
-export const CardSetContext = createContext<CardSetContextType | null>(null);
 
-const CardSetContextProvider = ({ children }: { children: ReactNode }) => {
+/* Context for the cardSet state to be shared between the page's child components without needing to pass in as a prop */
+export const CardSetContext = createContext<CardSetContextType | null>(null);
+export const CardSetContextProvider = ({ children }: { children: ReactNode }) => {
 	const [cardSet, setCardSet] = useState<CardType[]>(mockedList);
 
 	return (
@@ -68,6 +70,8 @@ const CardSetContextProvider = ({ children }: { children: ReactNode }) => {
 	);
 };
 
+
+/* Page component */
 const CardSetPage = () => {
 	const { cardSetId } = useParams();	
 

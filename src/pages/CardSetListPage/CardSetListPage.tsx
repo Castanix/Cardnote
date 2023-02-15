@@ -1,7 +1,7 @@
 import React from "react";
 import CardSetList from "../../components/CardSetList/CardSetList";
 
-const Landing = () => {
+const CardSetListPage = () => {
 	return (
 		<main className="page-margin">
 			<CardSetList />
@@ -9,4 +9,4 @@ const Landing = () => {
 	);
 };
 
-export default Landing;
+export default CardSetListPage;
