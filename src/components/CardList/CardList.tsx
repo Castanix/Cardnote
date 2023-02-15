@@ -5,24 +5,37 @@ import { CardSetContext } from "../../pages/CardSetPage/CardSetPage";
 import "./CardList.css";
 import CardListItem from "./CardListItem";
 
+
+/*
+* List component containing all cards.
+* It one of the main components rendered for CardSetPage.tsx.
+*/
 const CardList = () => {
-	const [open, setOpen] = useState<string>("1");
 	const { cardSet } = useContext(CardSetContext);
 
-	const toggle = () => {
-		if (open === "1") {
+	const [open, setOpen] = useState<string>("1");
+
+
+	/* Component functions */
+	const toggle = (accordionId: string) => {
+		if (open === accordionId) {
 			setOpen("");
 		} else {
-			setOpen("1");
+			setOpen(accordionId);
 		}
 	};
 
+
+	/* Rendered component */
 	return (
 		<div>
 			{ cardSet.length 
-				? <Accordion open={ open }>
+				? <Accordion open={ open } {...{
+					toggle: (accordionId: string) =>
+						toggle(accordionId)
+				}}>
 					<AccordionItem>
-						<AccordionHeader targetId="1" onClick={ () => toggle() }>
+						<AccordionHeader targetId="1">
 							<div>
 								Card set <Badge>{ cardSet.length }</Badge>
 							</div>

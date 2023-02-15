@@ -12,6 +12,7 @@ import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configuration = 4 }: { setCount: number, pageNumber: number, setPageNumber: React.Dispatch<React.SetStateAction<number>>, configuration?: number }) => {
 	const maxPage = Math.ceil(setCount / configuration);
 
+	
 	// Set up pagination for list based on setCount
 	const setPagination = () => {
 		const paginationArr: ReactNode[] = [];
@@ -34,6 +35,7 @@ const CardSetListPagination = ({ setCount, pageNumber, setPageNumber, configurat
 		}
 		return paginationArr;
 	};
+
 
 	/* Rendered component */
 	return (

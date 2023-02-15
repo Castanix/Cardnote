@@ -2,23 +2,33 @@ import React, { useContext, useEffect, useState } from "react";
 import { ListGroup, ListGroupItem, Button, Toast, ToastHeader, ToastBody, Input } from "reactstrap";
 import { CardSetContext, CardType } from "../../pages/CardSetPage/CardSetPage";
 
+
+/*
+* Item component for CardList.tsx. Keeps track of states for a singular card in the card set.
+* 
+* card: a singular card element in the cardSet
+*/
 const CardListItem = ({ card }: { card: CardType }) => {
 	const { cardSet, setCardSet } = useContext(CardSetContext);
+	
 	const cardIndex = cardSet.findIndex(cardIndex => cardIndex._id === card._id);
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
 	const [editable, setEditable] = useState<boolean>(false);
 	const [termValue, setTermValue] = useState<string>(card.term);
 	const [definitionValue, setDefinitionValue] = useState<string>(card.definition);
 
+
 	/* Currently displayed values in render */
 	const [currTerm, setCurrTerm] = useState<string>(card.term);
 	const [currDefinition, setCurrDefinition] = useState<string>(card.definition);
+
 
 	/* Use effects */
 	useEffect(() => {
 		setTermValue(currTerm);
 		setDefinitionValue(currDefinition);
 	}, [currTerm, currDefinition, editable]);
+
 
 	/* Component functions */
 	const deleteHandler = (isDelete: boolean) => {
@@ -40,6 +50,8 @@ const CardListItem = ({ card }: { card: CardType }) => {
 		setEditable(false);
 	};
 
+
+	/* Rendered component */
 	return (
 		<ListGroup className="card-item divider-block" horizontal key={ card._id }>
 			<ListGroupItem className="card-term">

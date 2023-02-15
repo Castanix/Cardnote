@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 /*
 * Set item component for CardSetList. Contains state of each item in the list including editing and deleting
 *
-* _id: unique identifier of each item in the list, used here specifically to find index in cardSets
+* set: a singular set element in the array of cardSets
 * cardSets: contains overall set list data
 * setCardSets: State dispatch function for cardSets
 */
@@ -15,19 +15,23 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 	const [editable, setEditable] = useState<boolean>(false);
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
 
+
 	/* Editable input values */
 	const [nameValue, setNameValue] = useState<string>(set.name);
 	const [descriptionValue, setDescriptionValue] = useState<string>(set.description);
+
 
 	/* Currently displayed values in render */
 	const [currName, setCurrName] = useState<string>(set.name);
 	const [currDescription, setCurrDescription] = useState<string>(set.description);
 
+	
 	/* Use effects */
 	useEffect(() => {
 		setNameValue(currName);
 		setDescriptionValue(currDescription);
 	}, [currName, currDescription, editable]);
+
 
 	/* Component functions */
 	const editCardSetHandler = (isEdit: boolean) => {
@@ -53,6 +57,7 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 		if (set.numCards === 0) setCardSets(cardSets.filter(setFilter => setFilter !== set));
 		else setDeleteShow(!deleteShow);
 	};
+
 
 	/* Rendered component */
 	return set
