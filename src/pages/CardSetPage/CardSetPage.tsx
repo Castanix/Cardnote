@@ -60,11 +60,9 @@ const mockedList: CardType[] = [
 
 /* Context for the cardSet state to be shared between the page's child components without needing to pass in as a prop */
 export const CardSetContext = createContext<CardSetContextType | null>(null);
-export const CardSetContextProvider = ({ children }: { children: ReactNode }) => {
-	const [cardSet, setCardSet] = useState<CardType[]>(mockedList);
-
+export const CardSetContextProvider = ({ children, value }: { children: ReactNode, value: CardSetContextType }) => {
 	return (
-		<CardSetContext.Provider value={{ cardSet, setCardSet }}>
+		<CardSetContext.Provider value={value}>
 			{ children }
 		</CardSetContext.Provider>
 	);
@@ -74,6 +72,7 @@ export const CardSetContextProvider = ({ children }: { children: ReactNode }) =>
 /* Page component */
 const CardSetPage = () => {
 	const { cardSetId } = useParams();	
+	const [cardSet, setCardSet] = useState<CardType[]>(mockedList);
 
 	return (
 		<main className="page-margin">
@@ -90,10 +89,10 @@ const CardSetPage = () => {
 							</CardSubtitle>
 						</div>
 						<div className="flashcard-button">
-							<Button outline color="primary">Flashcards</Button>
+							<Link to={ `/${ cardSetId }/flashcard` } state={{ cardSet: cardSet }}><Button outline color="primary">Flashcards</Button></Link>
 						</div>
 					</CardBody>
-					<CardSetContextProvider>
+					<CardSetContextProvider value={{ cardSet, setCardSet }}>
 						<CardBody className="add-card-body">
 							<AddCardForm />
 						</CardBody>
