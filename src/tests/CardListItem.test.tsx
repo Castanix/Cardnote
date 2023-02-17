@@ -1,6 +1,6 @@
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import userEvent from "@testing-library/user-event";
-import React from "react";
+import React, { useState } from "react";
 import { render, screen } from "@testing-library/react";
 import CardListItem from "../components/CardList/CardListItem";
 import { CardSetContextProvider, CardType } from "../pages/CardSetPage/CardSetPage";
@@ -16,8 +16,10 @@ const mockedCard: CardType =
 	};
 
 beforeEach(() => {
+	const [cardSet, setCardSet] = useState<CardType[]>([mockedCard]);
+	
 	document = render(
-		<CardSetContextProvider>
+		<CardSetContextProvider value={{ cardSet, setCardSet }}>
 			<CardListItem card={mockedCard} />
 		</CardSetContextProvider>
 	).container;
