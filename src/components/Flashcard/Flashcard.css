@@ -1,7 +1,21 @@
 .flashcard {
     width: 80%;
     padding-block: 16.5%;
+    left: 0vw;
 }
+
+.entercard-right {
+    animation-name: enter-right;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; 
+}
+
+.entercard-left {
+    animation-name: enter-left;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; 
+}
+
 
 .flip {
     animation-name: flipcard;
@@ -53,5 +67,23 @@
         transform: rotateX(0deg);
         perspective: 40%;
         transform-style: preserve-3d;
+    }
+}
+
+@keyframes enter-right {
+    from {
+        left: 100vw;
+    }
+    to {
+        left: 0vw;
+    }
+}
+
+@keyframes enter-left {
+    from {
+        left: -100vw;
+    }
+    to {
+        left: 0vw;
     }
 }
