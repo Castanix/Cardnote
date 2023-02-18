@@ -4,11 +4,21 @@ import { CardType } from "../../pages/CardSetPage/CardSetPage";
 
 import "./Flashcard.css";
 
+
+/*
+* Card component containing the state and render for a card
+* It is the main component rendered for the FlashcardPage.tsx.
+*
+* card: contains the card data used for rendering
+*/
 const Flashcard = ({ card }: { card: CardType }) => {
 	const [isFlip, setIsFlip] = useState<boolean>();
 	const [showDefinition, setShowDefinition] = useState<boolean>(false);
 
+
+	/* Use effects */
 	useEffect(() => {
+		// Add keyboard event and handler for arrow keys to flip card
 		const keyPressEvent = (e: KeyboardEvent) => {
 			handleKeyPress(e);
 		};
@@ -30,6 +40,7 @@ const Flashcard = ({ card }: { card: CardType }) => {
 	}, [isFlip]);
 
 	useEffect(() => {
+		// Reset states per new card prop and removes animation class after a set delay
 		setIsFlip(undefined);
 		setShowDefinition(false);
 
@@ -42,6 +53,7 @@ const Flashcard = ({ card }: { card: CardType }) => {
 	}, [card]);
 	
 	useEffect(() => {
+		// Set new state for 'showDefinition' after delay to allow flip animation to process
 		const timeout = setTimeout(() => setShowDefinition(isFlip ?? false), 150);
 
 		return () => {
@@ -49,6 +61,8 @@ const Flashcard = ({ card }: { card: CardType }) => {
 		};
 	}, [isFlip]);
 
+
+	/* Rendered component */
 	return (
 		<Card
 			className={ `flashcard ${ isFlip === undefined
