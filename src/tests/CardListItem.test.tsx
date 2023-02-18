@@ -8,21 +8,25 @@ import { CardSetContextProvider, CardType } from "../pages/CardSetPage/CardSetPa
 let document: HTMLElement;
 let user: UserEvent;
 
-const mockedCard: CardType = 
+const mockedCard: CardType =
 	{
 		_id: "1",
 		term: "Card 1",
 		definition: "Definition 1",
 	};
 
-beforeEach(() => {
-	const [cardSet, setCardSet] = useState<CardType[]>([mockedCard]);
-	
-	document = render(
+const Wrapper = () => {
+	const [cardSet, setCardSet] = useState<CardType[]>([]);
+
+	return (
 		<CardSetContextProvider value={{ cardSet, setCardSet }}>
 			<CardListItem card={mockedCard} />
 		</CardSetContextProvider>
-	).container;
+	);
+};
+
+beforeEach(() => {
+	document = render(<Wrapper />).container;
 	user = userEvent.setup();
 });
 
