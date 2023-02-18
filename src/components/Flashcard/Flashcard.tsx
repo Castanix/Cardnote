@@ -9,12 +9,40 @@ const Flashcard = ({ card }: { card: CardType }) => {
 	const [showDefinition, setShowDefinition] = useState<boolean>(false);
 
 	useEffect(() => {
+		const keyPressEvent = (e: KeyboardEvent) => {
+			handleKeyPress(e);
+		};
+
+		const handleKeyPress = (e: KeyboardEvent) => {
+			switch(e.code) {
+			case "ArrowUp":
+			case "ArrowDown":
+				setIsFlip(!isFlip);
+				break;
+			}
+		};
+
+		document.addEventListener("keydown", keyPressEvent);
+
+		return () => {
+			document.removeEventListener("keydown", keyPressEvent);
+		};
+	}, [isFlip]);
+
+	useEffect(() => {
 		setIsFlip(undefined);
 		setShowDefinition(false);
+
+		const flashcardEl = document.querySelector(".flashcard");
+		const timeout = setTimeout(() => flashcardEl.classList.remove("entercard-left", "entercard-right"), 400);
+
+		return () => {
+			clearTimeout(timeout);
+		};
 	}, [card]);
 	
 	useEffect(() => {
-		const timeout = setTimeout(() => setShowDefinition(isFlip), 150);
+		const timeout = setTimeout(() => setShowDefinition(isFlip ?? false), 150);
 
 		return () => {
 			clearTimeout(timeout);

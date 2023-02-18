@@ -3,12 +3,14 @@
     display: flex;
     height: fit-content;
     justify-content: center;
+    overflow-x: hidden;
 }
 
 .swap-card-button {
     margin-block: auto;
     font-size: 6rem;
     fill: #d2d2d2;
+    z-index: 1;
 }
 
 .swap-card-button:hover {
