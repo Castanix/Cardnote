@@ -46,10 +46,10 @@ test("Add new card to set", async () => {
 	const definitionInput = screen.getByPlaceholderText(/Enter Definition/i);
 	const addButton = screen.getAllByText(/Add card/i)[1];
 
-	await userEvent.type(termInput, "Term");
-	await userEvent.type(definitionInput, "Definition");
+	await user.type(termInput, "Term");
+	await user.type(definitionInput, "Definition");
 
-	await userEvent.click(addButton);
+	await user.click(addButton);
 
 	const numCards = document.querySelectorAll(".accordion-body")[1].childElementCount;
 
@@ -68,8 +68,8 @@ test("Accordions open and close", async () => {
 	expect(addCardBody).toHaveClass("show");
 	expect(cardSetBody).toHaveClass("show");
 
-	await userEvent.click(addCardAccordion);
-	await userEvent.click(cardSetAccordion);
+	await user.click(addCardAccordion);
+	await user.click(cardSetAccordion);
 
 	expect(addCardBody).not.toHaveClass("show");
 	expect(cardSetBody).not.toHaveClass("show");
