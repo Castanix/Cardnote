@@ -155,7 +155,8 @@ const CardSetList = () => {
 	const [alertCount, setAlertCount] = useState<number>(0);
 	const [pageNumber, setPageNumber] = useState<number>(1);
 	const debounceQuery = getDebounceQuery(searchValue ?? "");
-	
+	console.log(process.env.DB_USER);
+
 
 	/* Use effects */
 	useEffect(() => {
