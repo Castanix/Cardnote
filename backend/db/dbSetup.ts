@@ -1,25 +1,25 @@
-import { createPool, Pool, PoolConnection } from "mysql2/promise";
+import { createPool, Pool } from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname+"/../../.env" });
 
 export let mysqlPool: Pool | undefined = undefined;
 
 export const connectMysqlPool = async () => {
-    if (!mysqlPool) {
-        mysqlPool = createPool({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: "cardnote_db",
-            waitForConnections: true,
-            connectionLimit: 10,
-            maxIdle: 8,
-            idleTimeout: 60000,
-            queueLimit: 0
-        });
-    }
+	if (!mysqlPool) {
+		mysqlPool = createPool({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASSWORD,
+			database: "cardnote_db",
+			waitForConnections: true,
+			connectionLimit: 10,
+			maxIdle: 8,
+			idleTimeout: 60000,
+			queueLimit: 0
+		});
+	}
 
-    return mysqlPool;
+	return mysqlPool;
 };
 
 const createCardSetsTable = 
@@ -42,30 +42,30 @@ const createCardsTable =
 
 
 const setupDB = async () => {
-    const pool = await connectMysqlPool();
-    const connection = await pool.getConnection();
+	const pool = await connectMysqlPool();
+	const connection = await pool.getConnection();
 
-    try {
-        await connection.execute(createCardSetsTable)
-            .catch((err: string) => {
-                throw new Error(err);
-            });
+	try {
+		await connection.execute(createCardSetsTable)
+			.catch((err: string) => {
+				throw new Error(err);
+			});
         
-        connection.unprepare(createCardSetsTable);
+		connection.unprepare(createCardSetsTable);
 
-        await connection.execute(createCardsTable)
-            .catch((err: string) => {
-                throw new Error(err);
-            });
+		await connection.execute(createCardsTable)
+			.catch((err: string) => {
+				throw new Error(err);
+			});
 
-        connection.unprepare(createCardsTable);
-    } catch (err) {
-        console.log(err);
-    } finally {
-        connection.release();
-    }
+		connection.unprepare(createCardsTable);
+	} catch (err) {
+		console.log(err);
+	} finally {
+		connection.release();
+	}
 
-    await pool.end();
+	await pool.end();
 };
 
 setupDB();
