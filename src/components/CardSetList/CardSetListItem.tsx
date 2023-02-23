@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import { ListGroupItemHeading, ListGroupItemText, Button, Input, Toast, ToastBody, ToastHeader, Badge } from "reactstrap";
 import { CardSetType } from "./CardSetList";
 import { Link } from "react-router-dom";
+import DeleteCardSet from "./axios/DeleteCardSet";
+import UpdateCardSet from "./axios/UpdateCardSet";
+
+export type EditCardSetType = {
+	set_id: number,
+	name: string,
+	description: string,
+};
+
 
 /*
 * Set item component for CardSetList. Contains state of each item in the list including editing and deleting
@@ -11,7 +20,7 @@ import { Link } from "react-router-dom";
 * setCardSets: State dispatch function for cardSets
 */
 const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, cardSets: CardSetType[], setCardSets: React.Dispatch<React.SetStateAction<CardSetType[]>> }) => {
-	const setIndex = cardSets.findIndex(setIndex => setIndex._id === set._id);
+	const setIndex = cardSets.findIndex(setIndex => setIndex.set_id === set.set_id);
 	const [editable, setEditable] = useState<boolean>(false);
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
 
@@ -34,27 +43,41 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 
 
 	/* Component functions */
-	const editCardSetHandler = (isEdit: boolean) => {
-		if (isEdit && nameValue) {
-			const newCardSets = [...cardSets];
-			const newSet = { _id: set._id, name: nameValue, description: descriptionValue, numCards: set.numCards };
-			newCardSets[setIndex] = newSet;
-			setCardSets(newCardSets);
+	const editCardSetHandler = async (isEdit: boolean) => {
+		// Check if edit has been confirmed, if name value exists, and if a change has occurred
+		if (isEdit && nameValue && !(nameValue === currName && descriptionValue === currDescription)) {
+			const status = await UpdateCardSet({ set_id: cardSets[setIndex].set_id, name: nameValue, description: descriptionValue });
 
-			setCurrName(nameValue);
-			setCurrDescription(descriptionValue);
+			if (status === 204) {
+				const newCardSets = [...cardSets];
+				const newSet = { set_id: set.set_id, name: nameValue, description: descriptionValue, numCards: set.numCards };
+				newCardSets[setIndex] = newSet;
+				setCardSets(newCardSets);
+	
+				setCurrName(nameValue);
+				setCurrDescription(descriptionValue);
+			} else console.log("Error updating card set");
 		}
 
 		setEditable(false);
 	};
 
-	const deleteHandler = (isDelete: boolean) => {
-		if (isDelete) setCardSets(cardSets.filter(setFilter => setFilter !== set));
+	const deleteHandler = async (isDelete: boolean) => {
+		if (isDelete) {
+			const status = await DeleteCardSet(cardSets[setIndex].set_id);
+
+			if (status === 204) setCardSets(cardSets.filter(setFilter => setFilter !== set));
+		}
 		setDeleteShow(false);
 	};
 
-	const showDeleteHandler = () => {
-		if (set.numCards === 0) setCardSets(cardSets.filter(setFilter => setFilter !== set));
+	const showDeleteHandler = async () => {
+		if (set.numCards === 0) {
+			const status = await DeleteCardSet(cardSets[setIndex].set_id);
+
+			if (status === 204) setCardSets(cardSets.filter(setFilter => setFilter !== set));
+			else console.log("Error deleting card set");
+		}
 		else setDeleteShow(!deleteShow);
 	};
 
@@ -67,6 +90,7 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 					{ editable 
 						? <Input 
 							value={nameValue} 
+							maxLength={255}
 							onChange={ e => setNameValue(e.target.value) }
 						/>
 						: <div className="divider-inline">
@@ -78,17 +102,18 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 					}
 				</ListGroupItemHeading>
 
-				{ set.description 
-					? <ListGroupItemText>
-						{ editable 
-							? <Input
-								value={ descriptionValue }
-								onChange={ e => setDescriptionValue(e.target.value) }
-							/> 
-							: currDescription
+				{ editable
+					? <Input
+						value={ descriptionValue }
+						maxLength={510}
+						onChange={ e => setDescriptionValue(e.target.value) }
+					/>
+					: <ListGroupItemText>
+						{ set.description
+							? currDescription
+							: null
 						}
-					</ListGroupItemText> 
-					: null
+					</ListGroupItemText>
 				}
 			</div>
 			

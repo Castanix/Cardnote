@@ -1,20 +1,29 @@
 import express from "express";
-import { connectMysqlPool } from "./db/dbSetup";
+import cors from "cors";
+import bodyParser from "body-parser";
 
 import dotenv from "dotenv";
-dotenv.config({ path: __dirname+"/../../.env" });
+import apiRouter from "./api";
+dotenv.config({ path: __dirname+"/../.env" });
 
 const app = express();
+app.use(cors());
 
 const port = process.env.PORT || 8000;
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-connectMysqlPool()
-	.then(() => {
-		app.listen(port, () => console.log(`Server listening on port ${port}`));
-	})
-	.catch((err: Error) => {
-		console.error(err);
-	});
+app.use("/api", apiRouter);
+
+
+app.listen(port, () => console.log(`Server listening on port ${port}`));
+// connectMysqlPool()
+// 	.then(() => {
+// 		app.listen(port, () => console.log(`Server listening on port ${port}`));
+// 	})
+// 	.catch((err: Error) => {
+// 		console.error(err);
+// 	});
 
 export default app;
