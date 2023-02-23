@@ -2,9 +2,11 @@ import { createPool, Pool } from "mysql2/promise";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname+"/../../.env" });
 
+export let mysqlPool: Pool | undefined = undefined;
+
 export const connectMysqlPool = async () => {
-	const pool: Pool = createPool(
-		{
+	if (!mysqlPool) {
+		mysqlPool = createPool({
 			host: process.env.DB_HOST,
 			user: process.env.DB_USER,
 			password: process.env.DB_PASSWORD,
@@ -14,10 +16,10 @@ export const connectMysqlPool = async () => {
 			maxIdle: 8,
 			idleTimeout: 60000,
 			queueLimit: 0
-		}
-	);
+		});
+	}
 
-	return pool;
+	return mysqlPool;
 };
 
 const createCardSetsTable = 
@@ -25,7 +27,6 @@ const createCardSetsTable =
         "set_id INT NOT NULL AUTO_INCREMENT," +
         "name VARCHAR(255) NOT NULL," +
         "description VARCHAR(510) NULL," +
-        "num_cards INT NOT NULL DEFAULT 0," +
         "PRIMARY KEY (set_id)" +
     ")";
 

@@ -4,31 +4,16 @@ import CardSetListPage from "./pages/CardSetListPage/CardSetListPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CardSetPage from "./pages/CardSetPage/CardSetPage";
 import FlashcardsPage from "./pages/FlashcardsPage/FlashcardsPage";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 
-export const queryClient = new QueryClient(
-	{ 
-		defaultOptions: {
-			queries: {
-				refetchOnWindowFocus: false,
-			}
-		} 
-	}
-);
-
-const App = () => {	
+const App = () => {
 	return (
 		<div className="App">
 			<BrowserRouter>
-				<QueryClientProvider client={ queryClient }>
-					<Routes>
-						<Route path="/" element={ <CardSetListPage /> } />
-						<Route path="/:cardSetId" element={ <CardSetPage /> } />
-						<Route path="/:cardSetId/flashcard" element={ <FlashcardsPage /> } />
-					</Routes>
-					<ReactQueryDevtools initialIsOpen={false} />
-				</QueryClientProvider>
+				<Routes>
+					<Route path="/" element={ <CardSetListPage /> } />
+					<Route path="/:cardSetId" element={ <CardSetPage /> } />
+					<Route path="/:cardSetId/flashcard" element={ <FlashcardsPage /> } />
+				</Routes>
 			</BrowserRouter>
 		</div>
 	);
