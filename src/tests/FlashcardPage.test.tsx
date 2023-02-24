@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import '@testing-library/jest-dom';
 import userEvent from "@testing-library/user-event";
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import React from "react";
