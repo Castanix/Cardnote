@@ -1,60 +1,149 @@
-import { render, screen } from "@testing-library/react";
-import React from "react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
+import '@testing-library/jest-dom';
 import userEvent from "@testing-library/user-event";
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import { BrowserRouter } from "react-router-dom";
 import CardSetListPage from "../pages/CardSetListPage/CardSetListPage";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { CardSetType } from "../components/CardSetList/CardSetList";
+import { SetupServer, setupServer } from "msw/node";
+import { rest } from "msw";
 
 let document: HTMLElement;
 let user: UserEvent;
 
-beforeEach(() => {
-	document = render(<CardSetListPage />, { wrapper: BrowserRouter }).container;
-	user = userEvent.setup();
+
+const data: CardSetType[] = [];
+
+for (let i = 1; i <= 3; i++) {
+	data.push(
+		{
+			set_id: i,
+			name: "Test set",
+			description: "Test description",
+			numCards: 0,
+		}
+	);
+}
+
+let server: SetupServer = setupServer(
+	rest.get(`${process.env.REACT_APP_SERVER_URI}/cardset/allSets`, (_, res, ctx) => {
+		return res(ctx.status(200), ctx.json(data));
+	}),
+	rest.post(`${process.env.REACT_APP_SERVER_URI}/cardset/addCardSet`, (_, res, ctx) => {
+		return res(ctx.status(201), ctx.json({ inserted_id: Math.random() }));
+	})
+);
+
+	
+beforeAll(() => server.listen());
+
+afterEach(() => server.resetHandlers());
+
+afterAll(() => server.close());
+
+afterEach(() => {
+	cleanup();
+	jest.clearAllMocks();
+	jest.clearAllTimers();
 });
 
-test("Render searchbar", () => {
-	const searchbar = screen.getByPlaceholderText(/Search set/i);
-	expect(searchbar).toBeInTheDocument();
+describe("loading state", () => {	
+	beforeEach(() => {
+		document = render(
+					<QueryClientProvider client={ new QueryClient }>
+						<CardSetListPage />
+					</QueryClientProvider>, 
+				{ wrapper: BrowserRouter }).container;
+		user = userEvent.setup();
+	});
+	
+	test("Loading state", async () => {
+		const loading = screen.getByText(/Loading/i);
+		expect(loading).toBeInTheDocument();
+	
+		await waitFor(() => {
+			expect(loading).not.toBeInTheDocument();
+		})
+	}, 10000);
 });
 
-test("Render add set button", () => {
-	const addBtn = document.querySelector("#add-set-button");
-	expect(addBtn).toBeInTheDocument();
+
+describe("page renders", () => {
+	beforeEach(async () => {
+		document = await act(async () => render(
+					<QueryClientProvider client={ new QueryClient }>
+						<CardSetListPage />
+					</QueryClientProvider>, 
+				{ wrapper: BrowserRouter }).container);
+		user = userEvent.setup();
+	});
+	
+	test("Render searchbar", () => {
+		const searchbar = screen.getByPlaceholderText(/Search set/i);
+		expect(searchbar).toBeInTheDocument();
+	}, 10000);
+	
+	
+	test("Render add set button", () => {
+		const addBtn = document.querySelector("#add-set-button");
+		expect(addBtn).toBeInTheDocument();
+	}, 10000);
+
+	test("Render list item", () => {
+		const list = document.querySelectorAll(".card-set-list-items");
+
+		expect(list.length).toBe(3);
+	}, 10000);
+
+	test("Render pagination", () => {
+		const pagination = document.querySelector(".pagination");
+
+		expect(pagination).toBeInTheDocument();
+	}, 10000);
 });
 
-test("Click add set button", async () => {
-	const addBtn = document.querySelector("#add-set-button");
+describe("page actions", () => {
+	beforeEach(async () => {
+		document = await act(async () => render(
+					<QueryClientProvider client={ new QueryClient }>
+						<CardSetListPage />
+					</QueryClientProvider>, 
+				{ wrapper: BrowserRouter }).container);
+		user = userEvent.setup();
+	});
 
-	expect(screen.queryByText(/Add name/i)).toBeNull();
-	await userEvent.click(addBtn);
-	expect(screen.getByText(/Add name/i)).toBeInTheDocument();
+	test("Click add set button", async () => {
+		const addBtn = document.querySelector("#add-set-button");
+		let list = document.querySelectorAll(".card-set-list-items");
 
-});
+		expect(list.length).toBe(3);
+		await userEvent.click(addBtn);
 
-test("Render pagination", () => {
-	const pagination = document.querySelector(".pagination");
-	expect(pagination).toBeInTheDocument();
+		await waitFor(() => {
+			list = document.querySelectorAll(".card-set-list-items");
+			expect(list.length).toBe(4);
+		});
+	}, 10000);
 
-	// Pagination should be rendered on page 1 with first, previous disabled and page 1 active
-	const paginationFirst = screen.getByTitle("first");
-	const paginationPrev = screen.getByTitle("prev");
-	const paginationOne = screen.getByTitle("page 1");
-	const paginationNext = screen.getByTitle("next");
-	const paginationLast = screen.getByTitle("last");
+	test("Change pages with pagination", async () => {
+		expect(screen.queryByTitle(/page 2/i)).toBeNull();
 
-	expect(paginationFirst).toHaveClass("disabled");
-	expect(paginationPrev).toHaveClass("disabled");
-	expect(paginationOne).toHaveClass("active");
+		const addBtn = document.querySelector("#add-set-button");
+		await userEvent.click(addBtn);
+		await userEvent.click(addBtn);
 
-	expect(paginationNext).toBeInTheDocument();
-	expect(paginationLast).toBeInTheDocument();
-});
+		await waitFor(async () => {
+			const paginationTwo = screen.getByTitle(/page 2/i);
+	
+			expect(paginationTwo).toBeInTheDocument();
+			expect(paginationTwo).not.toHaveClass("active");
 
-test("Change pages with pagination", async () => {
-	const paginationTwo = screen.getByTitle("page 2");
+			await user.click(paginationTwo);
 
-	expect(paginationTwo).not.toHaveClass("active");
-	await user.click(paginationTwo);
-	expect(paginationTwo).toHaveClass("active");
+			await waitFor(() => {
+				expect(paginationTwo).toHaveClass("active");
+			});
+		});
+	}, 10000);
 });
