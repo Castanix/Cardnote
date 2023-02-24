@@ -1,5 +1,5 @@
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import React, { useState } from "react";
 import { render, screen } from "@testing-library/react";
