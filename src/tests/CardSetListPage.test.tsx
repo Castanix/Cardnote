@@ -1,5 +1,6 @@
+import React from "react";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import { BrowserRouter } from "react-router-dom";
@@ -26,7 +27,7 @@ for (let i = 1; i <= 3; i++) {
 	);
 }
 
-let server: SetupServer = setupServer(
+const server: SetupServer = setupServer(
 	rest.get(`${process.env.REACT_APP_SERVER_URI}/cardset/allSets`, (_, res, ctx) => {
 		return res(ctx.status(200), ctx.json(data));
 	}),
@@ -51,10 +52,10 @@ afterEach(() => {
 describe("loading state", () => {	
 	beforeEach(() => {
 		document = render(
-					<QueryClientProvider client={ new QueryClient }>
-						<CardSetListPage />
-					</QueryClientProvider>, 
-				{ wrapper: BrowserRouter }).container;
+			<QueryClientProvider client={ new QueryClient }>
+				<CardSetListPage />
+			</QueryClientProvider>, 
+			{ wrapper: BrowserRouter }).container;
 		user = userEvent.setup();
 	});
 	
@@ -64,7 +65,7 @@ describe("loading state", () => {
 	
 		await waitFor(() => {
 			expect(loading).not.toBeInTheDocument();
-		})
+		});
 	}, 10000);
 });
 
@@ -72,10 +73,10 @@ describe("loading state", () => {
 describe("page renders", () => {
 	beforeEach(async () => {
 		document = await act(async () => render(
-					<QueryClientProvider client={ new QueryClient }>
-						<CardSetListPage />
-					</QueryClientProvider>, 
-				{ wrapper: BrowserRouter }).container);
+			<QueryClientProvider client={ new QueryClient }>
+				<CardSetListPage />
+			</QueryClientProvider>, 
+			{ wrapper: BrowserRouter }).container);
 		user = userEvent.setup();
 	});
 	
@@ -106,10 +107,10 @@ describe("page renders", () => {
 describe("page actions", () => {
 	beforeEach(async () => {
 		document = await act(async () => render(
-					<QueryClientProvider client={ new QueryClient }>
-						<CardSetListPage />
-					</QueryClientProvider>, 
-				{ wrapper: BrowserRouter }).container);
+			<QueryClientProvider client={ new QueryClient }>
+				<CardSetListPage />
+			</QueryClientProvider>, 
+			{ wrapper: BrowserRouter }).container);
 		user = userEvent.setup();
 	});
 
