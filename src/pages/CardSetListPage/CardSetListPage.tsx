@@ -10,7 +10,7 @@ const CardSetListPage = () => {
 	
 	return (
 		<main className="page-margin">
-			<CardSetList data={data} />
+			<CardSetList data={ data } />
 		</main>
 	);
 };

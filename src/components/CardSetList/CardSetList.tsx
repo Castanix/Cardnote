@@ -36,7 +36,6 @@ const getDebounceQuery = (value: string, time = 250) => {
 * It is the main component rendered for the CardSetListPage.tsx.
 */
 const CardSetList = ({ data }: { data: CardSetType[] }) => {
-	const [cardSets, setCardSets] = useState<CardSetType[]>(data);
 	const [searchedSets, setSearchedSets] = useState<CardSetType[]>(data);
 	const [searchValue, setSearchValue] = useState<string>("");
 	const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false);
@@ -49,14 +48,14 @@ const CardSetList = ({ data }: { data: CardSetType[] }) => {
 	useEffect(() => {
 		// Reset all list states before debounceQuery triggers to prevent unwanted displays
 		setPageNumber(1);
-		setSearchedSets(cardSets);
+		setSearchedSets(data);
 		if (debounceQuery.length > 0) {
-			setSearchedSets(cardSets.filter(set => 
+			setSearchedSets(data.filter(set => 
 				set.name.toLowerCase().includes(debounceQuery) 
 				|| set.description.toLowerCase().includes(debounceQuery)
 			));
 		}
-	}, [debounceQuery, cardSets]);
+	}, [debounceQuery, data]);
 
 	useEffect(() => {
 		const timeout = setTimeout(() => setAlertCount(0), 2000);
@@ -74,13 +73,13 @@ const CardSetList = ({ data }: { data: CardSetType[] }) => {
 		const inserted_id = await PostCardSet();
 
 		if (inserted_id) {
-			setCardSets([
-				{
-					set_id: inserted_id,
-					name: "Add name", 
-					description: "Add description", 
-					numCards: 0
-				}, ...cardSets]);
+			// setCardSets([
+			// 	{
+			// 		set_id: inserted_id,
+			// 		name: "Add name", 
+			// 		description: "Add description", 
+			// 		numCards: 0
+			// 	}, ...cardSets]);
 			setAlertCount(alertCount + 1);
 		} else console.log("Error adding card set");
 	};
@@ -125,8 +124,8 @@ const CardSetList = ({ data }: { data: CardSetType[] }) => {
 					>Add set</Tooltip>
 				</ListGroupItem>
 				{ searchedSets.slice((pageNumber-1)*4, pageNumber*4).map(set =>
-					<ListGroupItem key={set.set_id}>
-						<CardSetListItem set={set} cardSets={cardSets} setCardSets={setCardSets} />
+					<ListGroupItem key={ set.set_id }>
+						<CardSetListItem set={ set } cardSets={ data } />
 					</ListGroupItem>)
 				}
 			</ListGroup>

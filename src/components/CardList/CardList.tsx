@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Badge } from "reactstrap";
-import { CardSetContext } from "../../pages/CardSetPage/CardSetPage";
+import { CardType } from "../../pages/CardSetPage/CardSetPage";
 
 import "./CardList.css";
 import CardListItem from "./CardListItem";
@@ -10,9 +10,7 @@ import CardListItem from "./CardListItem";
 * List component containing all cards.
 * It one of the main components rendered for CardSetPage.tsx.
 */
-const CardList = () => {
-	const { cardSet } = useContext(CardSetContext);
-
+const CardList = ({ cardSet }: { cardSet: CardType[] }) => {
 	const [open, setOpen] = useState<string>("1");
 
 
@@ -41,7 +39,7 @@ const CardList = () => {
 							</div>
 						</AccordionHeader>
 						<AccordionBody accordionId="1">
-							{ cardSet.map(card => <CardListItem key={card._id} card={card}/>) }
+							{ cardSet.map(card => <CardListItem key={ card.card_id } card={ card } cardSet={ cardSet } />) }
 						</AccordionBody>
 					</AccordionItem>
 				</Accordion>

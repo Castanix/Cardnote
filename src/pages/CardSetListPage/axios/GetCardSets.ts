@@ -2,7 +2,7 @@ import axios from "axios";
 import { useQuery } from "react-query";
 
 const axiosGetCardSets = async () => {
-	return await axios.get(`${process.env.REACT_APP_SERVER_URI}/cardset/allSets`, {
+	return await axios.get(`${ process.env.REACT_APP_SERVER_URI }/cardset/allSets`, {
 		method: "get",
 		timeout: 10000,
 		headers: {

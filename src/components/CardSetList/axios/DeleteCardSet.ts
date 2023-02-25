@@ -3,7 +3,7 @@ import { queryClient } from "../../../App";
 
 
 const axiosDeleteCardSet = async (set_id: number) => {
-	return await axios.delete(`${process.env.REACT_APP_SERVER_URI}/cardset/deleteCardSet`, {
+	return await axios.delete(`${ process.env.REACT_APP_SERVER_URI }/cardset/deleteCardSet`, {
 		method: "delete",
 		timeout: 10000,
 		headers: {
@@ -20,10 +20,10 @@ const axiosDeleteCardSet = async (set_id: number) => {
 };
 
 const DeleteCardSet = async (set_id: number) => {
-	const data = await axiosDeleteCardSet(set_id);
-	if (data) queryClient.invalidateQueries("getCardSets");
+	const status = await axiosDeleteCardSet(set_id);
+	if (status === 204) queryClient.invalidateQueries("getCardSets");
 
-	return data;
+	return status;
 };
 
 export default DeleteCardSet;

@@ -1,6 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ListGroup, ListGroupItem, Button, Toast, ToastHeader, ToastBody, Input } from "reactstrap";
-import { CardSetContext, CardType } from "../../pages/CardSetPage/CardSetPage";
+import { CardType } from "../../pages/CardSetPage/CardSetPage";
+import DeleteCard from "./axios/DeleteCard";
+import UpdateCard from "./axios/UpdateCard";
+
+export type DeleteCardType = {
+	card_id: number,
+	set_id: number,
+	numCards: number,
+};
+
+export type UpdateCardType = {
+	card_id: number,
+	term: string,
+	definition: string,
+};
 
 
 /*
@@ -8,10 +22,10 @@ import { CardSetContext, CardType } from "../../pages/CardSetPage/CardSetPage";
 * 
 * card: a singular card element in the cardSet
 */
-const CardListItem = ({ card }: { card: CardType }) => {
-	const { cardSet, setCardSet } = useContext(CardSetContext);
+const CardListItem = ({ card, cardSet }: { card: CardType, cardSet: CardType[] }) => {
+	// const cardSet = useContext(CardSetContext);
 	
-	const cardIndex = cardSet.findIndex(cardIndex => cardIndex._id === card._id);
+	const cardIndex = cardSet.findIndex(cardIndex => cardIndex.card_id === card.card_id);
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
 	const [editable, setEditable] = useState<boolean>(false);
 	const [termValue, setTermValue] = useState<string>(card.term);
@@ -31,20 +45,39 @@ const CardListItem = ({ card }: { card: CardType }) => {
 
 
 	/* Component functions */
-	const deleteHandler = (isDelete: boolean) => {
-		if (isDelete) setCardSet(cardSet.filter(cardFilter => cardFilter !== card));
+	const deleteHandler = async (isDelete: boolean) => {
+		if (isDelete) {
+			const { card_id, set_id } = cardSet[cardIndex];
+
+			const deletedCard = {
+				card_id,
+				set_id,
+				numCards: cardSet.length - 1,
+			};
+
+			const status = await DeleteCard(deletedCard);
+
+			if (status !== 204) {
+				console.log("Error deleting card");
+			}
+		}
 		setDeleteShow(false);
 	};
 
-	const editCardHandler = (isEdit: boolean) => {
+	const editCardHandler = async (isEdit: boolean) => {
 		if (isEdit && termValue && definitionValue) {
-			const newCard = { _id: card._id, term: termValue, definition: definitionValue };
-			const newCardSet = [...cardSet];
-			newCardSet[cardIndex] = newCard;
-			setCardSet(newCardSet);
+			const updatedCard = { 
+				card_id: card.card_id, 
+				term: termValue, 
+				definition: definitionValue 
+			};
 
-			setCurrTerm(termValue);
-			setCurrDefinition(definitionValue);
+			const status = await UpdateCard(updatedCard);
+			
+			if (status === 204) {
+				setCurrTerm(termValue);
+				setCurrDefinition(definitionValue);
+			} else console.error("Error updating card");			
 		}
 
 		setEditable(false);
@@ -53,7 +86,7 @@ const CardListItem = ({ card }: { card: CardType }) => {
 
 	/* Rendered component */
 	return (
-		<ListGroup className="card-item divider-block" horizontal key={ card._id }>
+		<ListGroup className="card-item divider-block" horizontal key={ card.card_id }>
 			<ListGroupItem className="card-term">
 				{ editable 
 					? <Input value={ termValue } onChange={ (e) => setTermValue(e.target.value) } />

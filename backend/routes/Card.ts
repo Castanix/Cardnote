@@ -2,20 +2,21 @@ import { Request, Response, Router } from "express";
 import { connectMysqlPool } from "../db/dbSetup";
 import { RowDataPacket } from "mysql2";
 
-const cardsetRoute = Router();
+const cardRoute = Router();
 
+cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
+	const { set_id } = req.params;
 
-cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		const selectQuery = "SELECT *, num_cards AS numCards FROM card_sets";
+		const selectQuery = 
+            "SELECT * FROM cards " +
+            `WHERE set_id = ${set_id}`;
 
 		connection.execute(selectQuery)
-			.then(result => {
-				res.status(200).send(result[0]);
-			})
+			.then(result => res.status(200).send(result[0]))
 			.catch(err => {
 				throw new Error(err);
 			});
@@ -29,22 +30,32 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	}
 });
 
-cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
+cardRoute.post("/addCard", async (req: Request, res: Response) => {
+	const { set_id, term, definition, numCards } = req.body.data;
+
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		const { name, description } = req.body.data;
-
 		const insertQuery =
-			"INSERT INTO card_sets (name, description) " +
-			`VALUES ("${ name }", "${ description }")`;
-		
+            "INSERT INTO cards (term, definition, set_id) " +
+            `VALUES ("${ term }", "${ definition }", ${ set_id }) `;
+
+		const updateQuery = 
+            "UPDATE card_sets " +
+            `SET num_cards = ${ numCards } ` +
+            `WHERE set_id = ${ set_id }`;
+
 		const selectQuery = "SELECT LAST_INSERT_ID() AS inserted_id";
 
 		await connection.execute(insertQuery)
-			.then(() => {
-				connection.execute(selectQuery)
+			.then(async () => {
+				await connection.execute(updateQuery)
+					.catch(err => {
+						throw new Error(err);
+					});
+
+				await connection.execute(selectQuery)
 					.then(result => {
 						const data = result[0] as RowDataPacket;
 						res.status(201).send({ inserted_id: data[0].inserted_id });
@@ -66,18 +77,27 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 	}
 });
 
-cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
+cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
+	const { card_id, set_id, numCards } = req.body;
+
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		const { set_id } = req.body;
+		const deleteQuery = `DELETE FROM cards WHERE card_id = ${ card_id }`;
 
-		const deleteQuery = `DELETE FROM card_sets WHERE set_id=${ set_id }`;
+		const updateQuery = 
+            "UPDATE card_sets " +
+            `SET num_cards = ${ numCards } ` +
+            `WHERE set_id = ${ set_id }`;
 
 		await connection.execute(deleteQuery)
-			.then(() => {
-				res.sendStatus(204);
+			.then(async () => {
+				await connection.execute(updateQuery)
+					.then(() => res.sendStatus(204))
+					.catch(err => {
+						throw new Error(err);
+					});
 			})
 			.catch(err => {
 				throw new Error(err);
@@ -92,17 +112,17 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 	}
 });
 
-cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
+cardRoute.put("/updateCard", async (req: Request, res: Response) => {
+	const { card_id, term, definition } = req.body.data;
+
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		const { set_id, name, description } = req.body.data;
-
 		const updateQuery = 
-			"UPDATE card_sets " +
-			`SET name = "${ name }", description = "${ description }" ` +
-			`WHERE set_id = ${ set_id }`;
+            "UPDATE cards " +
+            `SET term = "${ term }", definition = "${ definition }" ` +
+            `WHERE card_id = ${ card_id }`;
 
 		await connection.execute(updateQuery)
 			.then(() => {
@@ -121,5 +141,4 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 	}
 });
 
-
-export default cardsetRoute;
+export default cardRoute;
