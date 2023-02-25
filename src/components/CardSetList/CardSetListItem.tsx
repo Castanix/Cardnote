@@ -19,7 +19,7 @@ export type EditCardSetType = {
 * cardSets: contains overall set list data
 * setCardSets: State dispatch function for cardSets
 */
-const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, cardSets: CardSetType[], setCardSets: React.Dispatch<React.SetStateAction<CardSetType[]>> }) => {
+const CardSetListItem = ({ set, cardSets }: { set: CardSetType, cardSets: CardSetType[] }) => {
 	const setIndex = cardSets.findIndex(setIndex => setIndex.set_id === set.set_id);
 	const [editable, setEditable] = useState<boolean>(false);
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
@@ -52,7 +52,6 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 				const newCardSets = [...cardSets];
 				const newSet = { set_id: set.set_id, name: nameValue, description: descriptionValue, numCards: set.numCards };
 				newCardSets[setIndex] = newSet;
-				setCardSets(newCardSets);
 	
 				setCurrName(nameValue);
 				setCurrDescription(descriptionValue);
@@ -66,7 +65,7 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 		if (isDelete) {
 			const status = await DeleteCardSet(cardSets[setIndex].set_id);
 
-			if (status === 204) setCardSets(cardSets.filter(setFilter => setFilter !== set));
+			if (status !== 204) console.log("Error deleting set");
 		}
 		setDeleteShow(false);
 	};
@@ -75,8 +74,7 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 		if (set.numCards === 0) {
 			const status = await DeleteCardSet(cardSets[setIndex].set_id);
 
-			if (status === 204) setCardSets(cardSets.filter(setFilter => setFilter !== set));
-			else console.log("Error deleting card set");
+			if (status !== 204) console.log("Error deleting card set");
 		}
 		else setDeleteShow(!deleteShow);
 	};
@@ -89,12 +87,12 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 				<ListGroupItemHeading>
 					{ editable 
 						? <Input 
-							value={nameValue} 
-							maxLength={255}
+							value={ nameValue } 
+							maxLength={ 255 }
 							onChange={ e => setNameValue(e.target.value) }
 						/>
 						: <div className="divider-inline">
-							<Link to={ `/${set.name}` } title={ `Navigate to ${set.name}` }><span className="hoverable-link">{ currName }</span></Link>
+							<Link to={ `/${ set.name }/${ set.set_id }` } title={ `Navigate to ${ set.name }` }><span className="hoverable-link">{ currName }</span></Link>
 							<Badge>
 								{ set.numCards } cards in set
 							</Badge>
@@ -105,7 +103,7 @@ const CardSetListItem = ({ set, cardSets, setCardSets }: { set: CardSetType, car
 				{ editable
 					? <Input
 						value={ descriptionValue }
-						maxLength={510}
+						maxLength={ 510 }
 						onChange={ e => setDescriptionValue(e.target.value) }
 					/>
 					: <ListGroupItemText>

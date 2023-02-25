@@ -6,7 +6,7 @@ import { EditCardSetType } from "../CardSetListItem";
 const axiosUpdateCardSet = async (updatedSet: EditCardSetType) => {
 	const { set_id, name, description } = updatedSet;
 
-	return await axios.put(`${process.env.REACT_APP_SERVER_URI}/cardset/updateCardSet`, {
+	return await axios.put(`${ process.env.REACT_APP_SERVER_URI }/cardset/updateCardSet`, {
 		method: "put",
 		timeout: 10000,
 		headers: {
@@ -25,10 +25,10 @@ const axiosUpdateCardSet = async (updatedSet: EditCardSetType) => {
 };
 
 const UpdateCardSet = async (updatedSet: EditCardSetType) => {
-	const data = await axiosUpdateCardSet(updatedSet);
-	if (data) queryClient.invalidateQueries("getCardSets");
+	const status = await axiosUpdateCardSet(updatedSet);
+	if (status === 204) queryClient.invalidateQueries("getCardSets");
 
-	return data;
+	return status;
 };
 
 export default UpdateCardSet;

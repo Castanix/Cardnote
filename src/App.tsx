@@ -24,8 +24,8 @@ const App = () => {
 				<QueryClientProvider client={ queryClient }>
 					<Routes>
 						<Route path="/" element={ <CardSetListPage /> } />
-						<Route path="/:cardSetId" element={ <CardSetPage /> } />
-						<Route path="/:cardSetId/flashcard" element={ <FlashcardsPage /> } />
+						<Route path="/:cardSetName/:cardSetId" element={ <CardSetPage /> } />
+						<Route path="/:cardSetName/:cardSetId/flashcard" element={ <FlashcardsPage /> } />
 					</Routes>
 					<ReactQueryDevtools initialIsOpen={false} />
 				</QueryClientProvider>

@@ -1,14 +1,20 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Form, Row, Col, FormGroup, Label, Input, Accordion, AccordionHeader, AccordionBody, AccordionItem, Button } from "reactstrap";
-import { CardSetContext } from "../../pages/CardSetPage/CardSetPage";
+import { CardType } from "../../pages/CardSetPage/CardSetPage";
+import PostCard from "./axios/PostCard";
 
+export type AddCardType = {
+	term: string,
+	definition: string,
+	numCards: number,
+	set_id: number,
+};
 
 /*
 * Form component for adding cards to the card set.
 * It one of the main components rendered for CardSetPage.tsx.
 */
-const AddCardForm = () => {
-	const { cardSet, setCardSet } = useContext(CardSetContext);
+const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardType[] }) => {
 
 	const [open, setOpen] = useState<string>("1");
 	const [termValue, setTermValue] = useState<string>("");
@@ -24,15 +30,34 @@ const AddCardForm = () => {
 		}
 	};
 
-	const addCardHandler = () => {
+	const addCardHandler = async () => {
 		if (termValue && definitionValue) {
-			setCardSet([...cardSet,
-				{
-					_id: (cardSet.length + 1).toString(),
-					term: termValue,
-					definition: definitionValue,
-				}
-			]);
+			const postData = {
+				term: termValue,
+				definition: definitionValue,
+				numCards: cardSet.length + 1,
+				set_id: cardSetId
+			};
+
+			console.log(postData);
+
+			const inserted_id = await PostCard(postData);
+
+			if (!inserted_id) {
+				console.log("Error adding card");
+			}
+
+			// if (inserted_id) {
+			// 	setCardSet([...cardSet,
+			// 		{
+			// 			card_id: inserted_id,
+			// 			term: termValue,
+			// 			definition: definitionValue,
+			// 		}
+			// 	]);
+			// } else {
+			// 	console.log("Error adding card");
+			// }	
 		}
 	};
 

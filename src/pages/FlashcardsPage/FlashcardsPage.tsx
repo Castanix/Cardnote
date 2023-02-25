@@ -10,7 +10,7 @@ import "./FlashcardsPage.css";
 /* Page component */
 const FlashcardsPage = () => {
 	const { cardSet } = useLocation().state;
-	const { cardSetId } = useParams();
+	const { cardSetName, cardSetId } = useParams();
 
 	const [cardIndex, setCardIndex] = useState<number>(0);
 
@@ -68,7 +68,7 @@ const FlashcardsPage = () => {
 		<main className="page-margin">
 			{ cardSet 
 				? <Card>
-					<CardHeader><Link to={ `/${ cardSetId }` }>{ "<- " }<span className="hoverable-link">Back to cards</span></Link></CardHeader>
+					<CardHeader><Link to={ `/${ cardSetName }/${ cardSetId }` }>{ "<- " }<span className="hoverable-link">Back to cards</span></Link></CardHeader>
 					<CardBody className="flashcard-container">
 						<BsCaretLeftFill title="previous-card" className="swap-card-button left-button" onClick={ handleLeft } />
 						<Flashcard card={ cardSet[cardIndex] } />
