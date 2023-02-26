@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Card, CardBody, CardHeader, CardSubtitle, CardTitle } from "reactstrap";
+import { Button, Card, CardBody, CardHeader, CardTitle } from "reactstrap";
 import AddCardForm from "../../components/CardList/AddCardForm";
 import CardList from "../../components/CardList/CardList";
 
@@ -34,9 +34,9 @@ const CardSetPage = () => {
 							<CardTitle tag="h2">
 								{ cardSetName }
 							</CardTitle>
-							<CardSubtitle tag="h6">
+							{/* <CardSubtitle tag="h6">
 								Description
-							</CardSubtitle>
+							</CardSubtitle> */}
 						</div>
 						<div className="flashcard-button">
 							<Link to={ `/${ cardSetName }/${ cardSetId }/flashcard` } state={{ cardSet: data }}><Button outline color="primary">Flashcards</Button></Link>

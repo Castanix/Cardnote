@@ -73,11 +73,18 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 	try {
 		const { set_id } = req.body;
 
+		const deleteSubQuery = `DELETE FROM cards WHERE set_id=${ set_id }`;
 		const deleteQuery = `DELETE FROM card_sets WHERE set_id=${ set_id }`;
 
-		await connection.execute(deleteQuery)
-			.then(() => {
-				res.sendStatus(204);
+		await connection.execute(deleteSubQuery)
+			.then(async () => {
+				await connection.execute(deleteQuery)
+					.then(() => {
+						res.sendStatus(204);
+					})
+					.catch(err => {
+						throw new Error(err);
+					});
 			})
 			.catch(err => {
 				throw new Error(err);

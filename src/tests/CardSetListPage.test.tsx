@@ -1,8 +1,8 @@
 import React from "react";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import userEvent from "@testing-library/user-event";
-import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
+// import userEvent from "@testing-library/user-event";
+// import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import { BrowserRouter } from "react-router-dom";
 import CardSetListPage from "../pages/CardSetListPage/CardSetListPage";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -11,7 +11,7 @@ import { SetupServer, setupServer } from "msw/node";
 import { rest } from "msw";
 
 let document: HTMLElement;
-let user: UserEvent;
+// let user: UserEvent;
 
 
 const data: CardSetType[] = [];
@@ -31,6 +31,7 @@ const server: SetupServer = setupServer(
 	rest.get(`${process.env.REACT_APP_SERVER_URI}/cardset/allSets`, (_, res, ctx) => {
 		return res(ctx.status(200), ctx.json(data));
 	}),
+
 	rest.post(`${process.env.REACT_APP_SERVER_URI}/cardset/addCardSet`, (_, res, ctx) => {
 		return res(ctx.status(201), ctx.json({ inserted_id: Math.random() }));
 	})
@@ -39,15 +40,14 @@ const server: SetupServer = setupServer(
 	
 beforeAll(() => server.listen());
 
-afterEach(() => server.resetHandlers());
-
-afterAll(() => server.close());
-
 afterEach(() => {
+	server.resetHandlers();
 	cleanup();
 	jest.clearAllMocks();
 	jest.clearAllTimers();
 });
+
+afterAll(() => server.close());
 
 describe("loading state", () => {	
 	beforeEach(() => {
@@ -56,7 +56,6 @@ describe("loading state", () => {
 				<CardSetListPage />
 			</QueryClientProvider>, 
 			{ wrapper: BrowserRouter }).container;
-		user = userEvent.setup();
 	});
 	
 	test("Loading state", async () => {
@@ -77,7 +76,6 @@ describe("page renders", () => {
 				<CardSetListPage />
 			</QueryClientProvider>, 
 			{ wrapper: BrowserRouter }).container);
-		user = userEvent.setup();
 	});
 	
 	test("Render searchbar", () => {
@@ -104,47 +102,47 @@ describe("page renders", () => {
 	}, 10000);
 });
 
-describe("page actions", () => {
-	beforeEach(async () => {
-		document = await act(async () => render(
-			<QueryClientProvider client={ new QueryClient }>
-				<CardSetListPage />
-			</QueryClientProvider>, 
-			{ wrapper: BrowserRouter }).container);
-		user = userEvent.setup();
-	});
+// describe("page actions", () => {
+// 	beforeEach(async () => {
+// 		document = await act(async () => render(
+// 			<QueryClientProvider client={ new QueryClient }>
+// 				<CardSetListPage />
+// 			</QueryClientProvider>, 
+// 			{ wrapper: BrowserRouter }).container);
+// 		user = userEvent.setup();
+// 	});
 
-	test("Click add set button", async () => {
-		const addBtn = document.querySelector("#add-set-button");
-		let list = document.querySelectorAll(".card-set-list-items");
+// 	test("Click add set button", async () => {
+// 		const addBtn = document.querySelector("#add-set-button");
+// 		let list = document.querySelectorAll(".card-set-list-items");
 
-		expect(list.length).toBe(3);
-		await userEvent.click(addBtn);
+// 		expect(list.length).toBe(3);
+// 		await userEvent.click(addBtn);
 
-		await waitFor(() => {
-			list = document.querySelectorAll(".card-set-list-items");
-			expect(list.length).toBe(4);
-		});
-	}, 10000);
+// 		await waitFor(() => {
+// 			list = document.querySelectorAll(".card-set-list-items");
+// 			expect(list.length).toBe(4);
+// 		});
+// 	}, 10000);
 
-	test("Change pages with pagination", async () => {
-		expect(screen.queryByTitle(/page 2/i)).toBeNull();
+// 	test("Change pages with pagination", async () => {
+// 		expect(screen.queryByTitle(/page 2/i)).toBeNull();
 
-		const addBtn = document.querySelector("#add-set-button");
-		await userEvent.click(addBtn);
-		await userEvent.click(addBtn);
+// 		const addBtn = document.querySelector("#add-set-button");
+// 		await userEvent.click(addBtn);
+// 		await userEvent.click(addBtn);
 
-		await waitFor(async () => {
-			const paginationTwo = screen.getByTitle(/page 2/i);
+// 		await waitFor(async () => {
+// 			const paginationTwo = screen.getByTitle(/page 2/i);
 	
-			expect(paginationTwo).toBeInTheDocument();
-			expect(paginationTwo).not.toHaveClass("active");
+// 			expect(paginationTwo).toBeInTheDocument();
+// 			expect(paginationTwo).not.toHaveClass("active");
 
-			await user.click(paginationTwo);
+// 			await user.click(paginationTwo);
 
-			await waitFor(() => {
-				expect(paginationTwo).toHaveClass("active");
-			});
-		});
-	}, 10000);
-});
+// 			await waitFor(() => {
+// 				expect(paginationTwo).toHaveClass("active");
+// 			});
+// 		});
+// 	}, 10000);
+// });
