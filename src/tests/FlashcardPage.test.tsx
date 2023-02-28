@@ -85,36 +85,36 @@ test("Flashcard goes to next card", async () => {
 	await user.click(nextButton);
 
 	switch(num) {
-		case 1:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+	case 1:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 		
-				expect(term).toBeNull();
-				expect(term2 || term3).toBeInTheDocument();
-			}); 
-			break;
-		case 2:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+			expect(term).toBeNull();
+			expect(term2 || term3).toBeInTheDocument();
+		}); 
+		break;
+	case 2:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 
-				expect(term2).toBeNull();
-				expect(term || term3).toBeInTheDocument();
-			}); 
-			break;
-		case 3:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+			expect(term2).toBeNull();
+			expect(term || term3).toBeInTheDocument();
+		}); 
+		break;
+	case 3:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 		
-				expect(term3).toBeNull();
-				expect(term || term2).toBeInTheDocument();
-			}); 
-			break;
+			expect(term3).toBeNull();
+			expect(term || term2).toBeInTheDocument();
+		}); 
+		break;
 	}
 });
 
@@ -132,36 +132,36 @@ test("Flashcard goes to previous card", async () => {
 	await user.click(previousButton);
 
 	switch(num) {
-		case 1:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+	case 1:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 		
-				expect(term).toBeNull();
-				expect(term2 || term3).toBeInTheDocument();
-			}); 
-			break;
-		case 2:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+			expect(term).toBeNull();
+			expect(term2 || term3).toBeInTheDocument();
+		}); 
+		break;
+	case 2:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 
-				expect(term2).toBeNull();
-				expect(term || term3).toBeInTheDocument();
-			}); 
-			break;
-		case 3:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+			expect(term2).toBeNull();
+			expect(term || term3).toBeInTheDocument();
+		}); 
+		break;
+	case 3:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 		
-				expect(term3).toBeNull();
-				expect(term || term2).toBeInTheDocument();
-			}); 
-			break;
+			expect(term3).toBeNull();
+			expect(term || term2).toBeInTheDocument();
+		}); 
+		break;
 	} 
 });
 
@@ -178,35 +178,35 @@ test("Flashcard goes next and previous using keys", async () => {
 	await user.keyboard("{ArrowLeft}");
 
 	switch(num) {
-		case 1:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+	case 1:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 		
-				expect(term).toBeNull();
-				expect(term2 || term3).toBeInTheDocument();
-			}); 
-			break;
-		case 2:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+			expect(term).toBeNull();
+			expect(term2 || term3).toBeInTheDocument();
+		}); 
+		break;
+	case 2:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 
-				expect(term2).toBeNull();
-				expect(term || term3).toBeInTheDocument();
-			}); 
-			break;
-		case 3:
-			await waitFor(() => {
-				term = screen.queryByText(/Term 1/i);
-				term2 = screen.queryByText(/Term 2/i);
-				term3 = screen.queryByText(/Term 3/i);
+			expect(term2).toBeNull();
+			expect(term || term3).toBeInTheDocument();
+		}); 
+		break;
+	case 3:
+		await waitFor(() => {
+			term = screen.queryByText(/Term 1/i);
+			term2 = screen.queryByText(/Term 2/i);
+			term3 = screen.queryByText(/Term 3/i);
 		
-				expect(term3).toBeNull();
-				expect(term || term2).toBeInTheDocument();
-			}); 
-			break;
+			expect(term3).toBeNull();
+			expect(term || term2).toBeInTheDocument();
+		}); 
+		break;
 	} 
 });
