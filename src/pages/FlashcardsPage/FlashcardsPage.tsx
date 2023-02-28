@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Button, Card, CardBody, CardFooter, CardHeader } from "reactstrap";
 import Flashcard from "../../components/Flashcard/Flashcard";
@@ -28,10 +28,15 @@ const FlashcardsPage = () => {
 	const { cardSet } = useLocation().state;
 	const { cardSetName, cardSetId } = useParams();
 
-	const [flashcardSet, setFlashcardSet] = useState<CardType[]>(shuffleSet(cardSet));
+	const randomizedSet = useMemo(() => shuffleSet(cardSet), [cardSet]);
+	const [flashcardSet, setFlashcardSet] = useState<CardType[]>(randomizedSet);
 	const [cardIndex, setCardIndex] = useState<number>(0);
-	const [currCard, setCurrCard] = useState<CardType>(flashcardSet[0]);
+	const [currCard, setCurrCard] = useState<CardType>(flashcardSet[cardIndex]);
 
+
+	useEffect(() => {
+		setCurrCard(flashcardSet[cardIndex]);
+	}, [cardIndex]);
 
 	/* Use effects */
 	useEffect(() => {
@@ -64,8 +69,6 @@ const FlashcardsPage = () => {
 		if (cardIndex === 0) setCardIndex(flashcardSet.length - 1);
 		else setCardIndex(cardIndex - 1);
 
-		setCurrCard(flashcardSet[cardIndex]);
-
 		const flashcardEl = document.querySelector(".flashcard");
 
 		// TODO: Discover better way to set entry animations when scrolling to new card from a flipped card.
@@ -75,8 +78,6 @@ const FlashcardsPage = () => {
 	const handleRight = () => {
 		if (cardIndex === flashcardSet.length - 1) setCardIndex(0);
 		else setCardIndex(cardIndex + 1);
-
-		setCurrCard(flashcardSet[cardIndex]);
 
 		const flashcardEl = document.querySelector(".flashcard");
 
