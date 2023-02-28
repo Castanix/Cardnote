@@ -39,7 +39,7 @@ const CardSetPage = () => {
 							</CardSubtitle> */}
 						</div>
 						<div className="flashcard-button">
-							<Link to={ `/${ cardSetName }/${ cardSetId }/flashcard` } state={{ cardSet: data }}><Button outline color="primary">Flashcards</Button></Link>
+							<Link to={ `/${ cardSetName }/${ cardSetId }/flashcard` } state={{ cardSet: data ?? [] }}><Button outline color="primary">Flashcards</Button></Link>
 						</div>
 					</CardBody>
 					<CardBody className="add-card-body">
