@@ -37,7 +37,7 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 
 		connection.execute(selectQuery)
 			.then(result => {
-				res.status(200).send(result[0])
+				res.status(200).send(result[0]);
 			})
 			.catch(err => {
 				throw new Error(err);
@@ -61,7 +61,7 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 	if (!(set_id && term && definition && numCards)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
-	};
+	}
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
@@ -133,14 +133,14 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 	if (!(card_id && set_id && numCards)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
-	};
+	}
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		let selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
-		let selectCardQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
+		const selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		const selectCardQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
 
 		const setExists = await connection.execute(selectSetQuery)
 			.then(result => {
@@ -207,13 +207,13 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 	if (!(card_id && term && definition)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
-	};
+	}
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		let selectQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
+		const selectQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
@@ -232,7 +232,7 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 
 		const updateQuery = 
             `UPDATE cards${ suffix } ` +
-            `SET term = "${ (term as String).trim() }", definition = "${ (definition as String).trim() }" ` +
+            `SET term = "${ (term as string).trim() }", definition = "${ (definition as string).trim() }" ` +
             `WHERE card_id = ${ card_id }`;
 
 		await connection.execute(updateQuery)
