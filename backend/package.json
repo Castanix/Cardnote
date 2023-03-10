@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "ts-node ./server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand",
     "setupDB": "ts-node ./db/dbSetup.ts &"
   },
   "author": "",
@@ -13,10 +13,12 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "mysql2": "^3.1.2"
+    "mysql2": "^3.1.2",
+    "supertest": "^6.3.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
-    "@types/mysql": "^2.15.21"
+    "@types/mysql": "^2.15.21",
+    "@types/supertest": "^2.0.12"
   }
 }

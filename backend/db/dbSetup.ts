@@ -20,8 +20,8 @@ export const connectMysqlPool = async () => {
 	return pool;
 };
 
-const createCardSetsTable = 
-    "CREATE TABLE IF NOT EXISTS card_sets(" +
+const createCardSetsTable = (test?: boolean) =>
+    `CREATE TABLE IF NOT EXISTS card_sets${ test ? "_test" : "" }(` +
         "set_id INT NOT NULL AUTO_INCREMENT," +
         "name VARCHAR(255) NOT NULL," +
         "description VARCHAR(510) NULL," +
@@ -29,35 +29,38 @@ const createCardSetsTable =
         "PRIMARY KEY (set_id)" +
     ")";
 
-const createCardsTable = 
-    "CREATE TABLE IF NOT EXISTS cards(" +
+const createCardsTable = (test?: boolean) =>
+    `CREATE TABLE IF NOT EXISTS cards${ test ? "_test" : "" }(` +
         "card_id INT NOT NULL AUTO_INCREMENT," +
         "term VARCHAR(510) NOT NULL," +
         "definition VARCHAR(2040) NOT NULL," +
         "set_id INT NOT NULL," +
         "PRIMARY KEY (card_id)," +
-        "FOREIGN KEY (set_id) REFERENCES card_sets(set_id)" +
+        `FOREIGN KEY (set_id) REFERENCES card_sets${ test ? "_test" : "" }(set_id)` +
     ")";
 
 
-const setupDB = async () => {
+export const setupDB = async (test?: boolean) => {
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		await connection.execute(createCardSetsTable)
+		const query = createCardSetsTable(test);
+
+		await connection.execute(query)
 			.catch((err: string) => {
 				throw new Error(err);
 			});
         
-		connection.unprepare(createCardSetsTable);
+		connection.unprepare(createCardSetsTable(test));
 
-		await connection.execute(createCardsTable)
+		const query2 = createCardsTable(test);
+		await connection.execute(query2)
 			.catch((err: string) => {
 				throw new Error(err);
 			});
 
-		connection.unprepare(createCardsTable);
+		connection.unprepare(createCardsTable(test));
 	} catch (err) {
 		console.log(err);
 	} finally {
@@ -67,4 +70,4 @@ const setupDB = async () => {
 	await pool.end();
 };
 
-setupDB();
+// setupDB();

@@ -5,18 +5,40 @@ import { RowDataPacket } from "mysql2";
 const cardRoute = Router();
 
 cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
+	const { test } = req.headers;
+	const suffix = test ? "_test" : "";
+
 	const { set_id } = req.params;
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		const selectQuery = 
-            "SELECT * FROM cards " +
+		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+
+		const exists = await connection.execute(selectQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Card set does not exist" });
+					return false;
+				}
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		if (!exists) return;
+
+		selectQuery = 
+            `SELECT * FROM cards${ suffix } ` +
             `WHERE set_id = ${set_id}`;
 
 		connection.execute(selectQuery)
-			.then(result => res.status(200).send(result[0]))
+			.then(result => {
+				res.status(200).send(result[0])
+			})
 			.catch(err => {
 				throw new Error(err);
 			});
@@ -31,22 +53,47 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 });
 
 cardRoute.post("/addCard", async (req: Request, res: Response) => {
+	const { test } = req.headers;
+	const suffix = test ? "_test" : "";
+
 	const { set_id, term, definition, numCards } = req.body.data;
+
+	if (!(set_id && term && definition && numCards)) {
+		res.status(400).send({ error: "Data is missing fields" });
+		return;
+	};
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
+		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+
+		const exists = await connection.execute(selectQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Card set does not exist" });
+					return false;
+				}
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		if (!exists) return;
+
 		const insertQuery =
-            "INSERT INTO cards (term, definition, set_id) " +
-            `VALUES ("${ term }", "${ definition }", ${ set_id }) `;
+            `INSERT INTO cards${ suffix } (term, definition, set_id) ` +
+            `VALUES ("${ (term as string).trim() }", "${ (definition as string).trim() }", ${ set_id }) `;
 
 		const updateQuery = 
-            "UPDATE card_sets " +
+            `UPDATE card_sets${ suffix } ` +
             `SET num_cards = ${ numCards } ` +
             `WHERE set_id = ${ set_id }`;
-
-		const selectQuery = "SELECT LAST_INSERT_ID() AS inserted_id";
+		
+		selectQuery = "SELECT LAST_INSERT_ID() AS inserted_id";
 
 		await connection.execute(insertQuery)
 			.then(async () => {
@@ -78,16 +125,55 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 });
 
 cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
+	const { test } = req.headers;
+	const suffix = test ? "_test" : "";
+
 	const { card_id, set_id, numCards } = req.body;
+
+	if (!(card_id && set_id && numCards)) {
+		res.status(400).send({ error: "Data is missing fields" });
+		return;
+	};
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		const deleteQuery = `DELETE FROM cards WHERE card_id = ${ card_id }`;
+		let selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		let selectCardQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
+
+		const setExists = await connection.execute(selectSetQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Card set does not exist" });
+					return false;
+				}
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+		
+		const cardExists = await connection.execute(selectCardQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Card does not exist" });
+					return false;
+				}
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		if (!(setExists && cardExists)) return;
+
+		const deleteQuery = `DELETE FROM cards${ suffix } WHERE card_id = ${ card_id }`;
 
 		const updateQuery = 
-            "UPDATE card_sets " +
+            `UPDATE card_sets${ suffix } ` +
             `SET num_cards = ${ numCards } ` +
             `WHERE set_id = ${ set_id }`;
 
@@ -113,15 +199,40 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 });
 
 cardRoute.put("/updateCard", async (req: Request, res: Response) => {
+	const { test } = req.headers;
+	const suffix = test ? "_test" : "";
+
 	const { card_id, term, definition } = req.body.data;
+
+	if (!(card_id && term && definition)) {
+		res.status(400).send({ error: "Data is missing fields" });
+		return;
+	};
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
+		let selectQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
+
+		const exists = await connection.execute(selectQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Card does not exist" });
+					return false;
+				}
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		if (!exists) return;
+
 		const updateQuery = 
-            "UPDATE cards " +
-            `SET term = "${ term }", definition = "${ definition }" ` +
+            `UPDATE cards${ suffix } ` +
+            `SET term = "${ (term as String).trim() }", definition = "${ (definition as String).trim() }" ` +
             `WHERE card_id = ${ card_id }`;
 
 		await connection.execute(updateQuery)
