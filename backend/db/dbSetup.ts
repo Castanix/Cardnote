@@ -21,7 +21,7 @@ export const connectMysqlPool = async () => {
 };
 
 const createCardSetsTable = (test?: boolean) =>
-    `CREATE TABLE IF NOT EXISTS card_sets${ test ? "_test" : "" }(` +
+	`CREATE TABLE IF NOT EXISTS card_sets${ test ? "_test" : "" }(` +
         "set_id INT NOT NULL AUTO_INCREMENT," +
         "name VARCHAR(255) NOT NULL," +
         "description VARCHAR(510) NULL," +
@@ -30,7 +30,7 @@ const createCardSetsTable = (test?: boolean) =>
     ")";
 
 const createCardsTable = (test?: boolean) =>
-    `CREATE TABLE IF NOT EXISTS cards${ test ? "_test" : "" }(` +
+	`CREATE TABLE IF NOT EXISTS cards${ test ? "_test" : "" }(` +
         "card_id INT NOT NULL AUTO_INCREMENT," +
         "term VARCHAR(510) NOT NULL," +
         "definition VARCHAR(2040) NOT NULL," +

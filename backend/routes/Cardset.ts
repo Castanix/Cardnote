@@ -41,7 +41,7 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 	if (!(name && description)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
-	};
+	}
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
@@ -86,13 +86,13 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 	if (!(set_id)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
-	};
+	}
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
@@ -144,13 +144,13 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 	if (!(set_id && name && description)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
-	};
+	}
 
 	const pool = await connectMysqlPool();
 	const connection = await pool.getConnection();
 
 	try {
-		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
