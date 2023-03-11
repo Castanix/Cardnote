@@ -38,7 +38,7 @@ const CardList = ({ cardSet }: { cardSet: CardType[] }) => {
 								Card set <Badge>{ cardSet.length }</Badge>
 							</div>
 						</AccordionHeader>
-						<AccordionBody accordionId="1">
+						<AccordionBody className="card-set-accordion" accordionId="1">
 							{ cardSet.map(card => <CardListItem key={ card.card_id } card={ card } cardSet={ cardSet } />) }
 						</AccordionBody>
 					</AccordionItem>

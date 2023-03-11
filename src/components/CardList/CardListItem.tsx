@@ -17,14 +17,39 @@ export type UpdateCardType = {
 };
 
 
+const testIsMobile = () => {
+	if (typeof window === "undefined") return true;
+	return window.innerWidth < 600;
+};
+
+
+/* Custom hook for checking if window size is mobile on resize */
+const useIsMobileSize = () => {
+	const [isMobileSize, setIsMobileSize] = useState<boolean>(testIsMobile());
+
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+
+		const autoResize = () => {
+			setIsMobileSize(testIsMobile());
+		};
+
+		window.addEventListener("resize", autoResize);
+
+		// Return a function to disconnect the event listener
+		return () => window.removeEventListener("resize", autoResize);
+	}, []);
+
+	return isMobileSize;
+};
+
+
 /*
 * Item component for CardList.tsx. Keeps track of states for a singular card in the card set.
 * 
 * card: a singular card element in the cardSet
 */
 const CardListItem = ({ card, cardSet }: { card: CardType, cardSet: CardType[] }) => {
-	// const cardSet = useContext(CardSetContext);
-	
 	const cardIndex = cardSet.findIndex(cardIndex => cardIndex.card_id === card.card_id);
 	const [deleteShow, setDeleteShow] = useState<boolean>(false);
 	const [editable, setEditable] = useState<boolean>(false);
@@ -86,7 +111,7 @@ const CardListItem = ({ card, cardSet }: { card: CardType, cardSet: CardType[] }
 
 	/* Rendered component */
 	return (
-		<ListGroup className="card-item divider-block" horizontal key={ card.card_id }>
+		<ListGroup className="card-item divider-block" horizontal={ useIsMobileSize() ? false : true } key={ card.card_id }>
 			<ListGroupItem className="card-term">
 				{ editable 
 					? <Input value={ termValue } onChange={ (e) => setTermValue(e.target.value) } />

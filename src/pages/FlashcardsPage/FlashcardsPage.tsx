@@ -99,10 +99,14 @@ const FlashcardsPage = () => {
 				? <Card>
 					<CardHeader><Link to={ `/${ cardSetName }/${ cardSetId }` }>{ "<- " }<span className="hoverable-link">Back to cards</span></Link></CardHeader>
 					<CardBody className="flashcard-container">
-						<BsCaretLeftFill title="previous-card" className="swap-card-button left-button" onClick={ handleLeft } />
+						<BsCaretLeftFill title="previous-card" className="swap-card-button pc left-button" onClick={ handleLeft } />
 						<Flashcard card={ currCard } />
-						<BsCaretRightFill title="next-card" className="swap-card-button right-button" onClick={ handleRight } />
+						<BsCaretRightFill title="next-card" className="swap-card-button pc right-button" onClick={ handleRight } />
 					</CardBody>
+					<div className="swap-card-container-mobile">
+						<BsCaretLeftFill title="previous-card" className="swap-card-button left-button" onClick={ handleLeft } />
+						<BsCaretRightFill title="next-card" className="swap-card-button right-button" onClick={ handleRight } />
+					</div>
 					<CardFooter>
 						<Button onClick={handleRandomize}>Randomize Set</Button>
 					</CardFooter>
