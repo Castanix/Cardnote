@@ -1,5 +1,11 @@
 * {
   box-sizing: border-box;
+  scrollbar-width: thin !important;
+  scrollbar-color: gray lightgray !important;
+}
+
+html {
+  overflow-x: hidden !important;
 }
 
 body {
@@ -9,6 +15,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden !important;
 }
 
 code {
@@ -44,4 +51,26 @@ a {
     margin: auto;
     width: 100%;
   }
+}
+
+
+
+
+/* Webkit css */
+/* webkit scrollbar compatible with Chrome, Edge, Opera, Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: lightgray;
+  border-radius: 20px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: gray;
+  border-radius: 20px;
 }

@@ -39,8 +39,6 @@ const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardT
 				set_id: cardSetId
 			};
 
-			console.log(postData);
-
 			const inserted_id = await PostCard(postData);
 
 			if (!inserted_id) {
@@ -87,11 +85,6 @@ const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardT
 											onChange={ (e) => setTermValue(e.target.value) }
 										/>
 									</div>
-									<Button 
-										onClick={ addCardHandler } 
-										outline 
-										color="primary"
-									>Add card</Button>
 								</FormGroup>
 							</Col>
 							<Col md={ 6 }>
@@ -111,6 +104,11 @@ const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardT
 							</Col>
 						</Row>
 					</Form>
+					<Button 
+						onClick={ addCardHandler } 
+						outline 
+						color="primary"
+					>Add card</Button>
 				</AccordionBody>
 			</AccordionItem>
 		</Accordion>

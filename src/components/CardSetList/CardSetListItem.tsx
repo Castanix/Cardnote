@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import DeleteCardSet from "./axios/DeleteCardSet";
 import UpdateCardSet from "./axios/UpdateCardSet";
 
+
 export type EditCardSetType = {
 	set_id: number,
 	name: string,
@@ -83,7 +84,7 @@ const CardSetListItem = ({ set, cardSets }: { set: CardSetType, cardSets: CardSe
 	/* Rendered component */
 	return set
 		? <div className="card-set-list-items">
-			<div>
+			<div className="card-set-info">
 				<ListGroupItemHeading>
 					{ editable 
 						? <Input 
@@ -115,7 +116,7 @@ const CardSetListItem = ({ set, cardSets }: { set: CardSetType, cardSets: CardSe
 				}
 			</div>
 			
-			<div style={{ textAlign: "center" }}>
+			<div className="card-set-toolbar" style={{ textAlign: "center" }}>
 				<div className="divider-block divider-inline">
 					{ editable
 						? <div className="divider-inline">

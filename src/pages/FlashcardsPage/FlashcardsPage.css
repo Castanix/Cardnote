@@ -13,6 +13,21 @@
     z-index: 1;
 }
 
+.swap-card-container-mobile {
+    display: none;
+}
+
 .swap-card-button:hover {
     fill: black;
+}
+
+@media screen and (max-width: 600px) {
+    .swap-card-button.pc {
+        display: none;
+    }
+
+    .swap-card-container-mobile {
+        display: flex;
+        justify-content: center;
+    }
 }

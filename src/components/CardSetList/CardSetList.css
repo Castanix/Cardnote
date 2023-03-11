@@ -8,4 +8,22 @@
 .card-set-list-items {
     display: flex !important;
     justify-content: space-between;
-};
+}
+
+.card-set-info {
+    /* overflow: hidden; */
+    /* white-space: nowrap; */
+    /* text-overflow: ellipsis; */
+    max-width: 62%;
+}
+
+@media screen and (max-width: 600px) {
+    .card-set-list-items {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .card-set-info {
+        max-width: 100%;
+    }
+}

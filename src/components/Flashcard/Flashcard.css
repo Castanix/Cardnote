@@ -1,6 +1,7 @@
 .flashcard {
     width: 80%;
-    padding-block: 16.5%;
+    margin-block: 2%;
+    padding-block: 16.25%;
     left: 0vw;
 }
 
@@ -38,8 +39,38 @@
 }
 
 .card-text {
-    display: block;
+    position: relative;
     text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: 100%;
+}
+
+.card-text-container {
+    position: relative;
+    height: 160px;
+    overflow-y: auto;
+    padding: 0 !important;
+}
+
+
+
+@media screen and (max-width: 600px) {
+    .card-text-container {
+        height: 100px;
+    }
+}
+
+@media screen and (max-height: 600px) {
+    .flashcard {
+        padding-block: 12.50%;
+    }
+}
+
+@media screen and (max-height: 400px) {
+    .flashcard {
+        padding-block: 8.75%;
+    }
 }
 
 
