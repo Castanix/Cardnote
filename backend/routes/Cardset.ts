@@ -17,6 +17,8 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 
 		connection.execute(selectQuery)
 			.then(result => {
+
+
 				res.status(200).send(result[0]);
 			})
 			.catch(err => {
@@ -42,16 +44,35 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 	const connection = await pool.getConnection();
 
 	try {
+		const existsQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ setId })`;
+
+		const exists = await connection.execute(existsQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Set does not exist" });
+					return false;
+				}
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		if (!exists) return;
+
 		const selectQuery = `SELECT description FROM card_sets${ suffix } WHERE set_id = ${ setId }`;
 
 		connection.execute(selectQuery)
 			.then(result => {
 				const data = result[0] as RowDataPacket;
+
 				res.status(200).send({ description: data[0].description });
 			})
 			.catch(err => {
 				throw new Error(err);
 			});
+
 	} catch (err) {
 		console.log(err);
 
