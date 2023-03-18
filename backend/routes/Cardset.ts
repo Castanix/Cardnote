@@ -32,6 +32,36 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	}
 });
 
+cardsetRoute.get("/oneSet/:setId", async (req: Request, res: Response) => {
+	const { test } = req.headers;
+	const suffix = test ? "_test" : "";
+
+	const { setId } = req.params;
+
+	const pool = await connectMysqlPool();
+	const connection = await pool.getConnection();
+
+	try {
+		const selectQuery = `SELECT description FROM card_sets${ suffix } WHERE set_id = ${ setId }`;
+
+		connection.execute(selectQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket;
+				res.status(200).send(data[0].description);
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+	} catch (err) {
+		console.log(err);
+
+		res.status(503);
+	} finally {
+		connection.release();
+		pool.end();
+	}
+});
+
 cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";

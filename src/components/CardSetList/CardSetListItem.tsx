@@ -93,7 +93,9 @@ const CardSetListItem = ({ set, cardSets }: { set: CardSetType, cardSets: CardSe
 							onChange={ e => setNameValue(e.target.value) }
 						/>
 						: <div className="divider-inline">
-							<Link to={ `/${ set.name }/${ set.set_id }` } title={ `Navigate to ${ set.name }` }><span className="hoverable-link">{ currName }</span></Link>
+							<Link to={ `/${ set.name }/${ set.set_id }` } title={ `Navigate to ${ set.name }` }>
+								<span className="hoverable-link">{ currName }</span>
+							</Link>
 							<Badge>
 								{ set.numCards } cards in set
 							</Badge>
