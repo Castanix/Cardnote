@@ -3,14 +3,14 @@ import { useQuery } from "react-query";
 
 
 const axiosGetSetDescription = async (set_id: number) => {
-	return await axios.get(`${ process.env.REACT_APP_SERVER_URI }/cardset/oneSet/${ set_id }`, {
+	return await axios.get(`${ process.env.REACT_APP_SERVER_URI }/cardset/oneSetDescription/${ set_id }`, {
 		method: "get",
 		timeout: 10000,
 		headers: {
 			"Content-Type": "application/json",
 		}
 	})
-		.then(result => result.data)
+		.then(result => result.data.description)
 		.catch(err => {
 			console.error(err);
 		});
