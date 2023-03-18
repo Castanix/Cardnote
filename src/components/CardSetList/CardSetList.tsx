@@ -73,13 +73,6 @@ const CardSetList = ({ data }: { data: CardSetType[] }) => {
 		const inserted_id = await PostCardSet();
 
 		if (inserted_id) {
-			// setCardSets([
-			// 	{
-			// 		set_id: inserted_id,
-			// 		name: "Add name", 
-			// 		description: "Add description", 
-			// 		numCards: 0
-			// 	}, ...cardSets]);
 			setAlertCount(alertCount + 1);
 		} else console.log("Error adding card set");
 	};
