@@ -41,7 +41,7 @@ const mockedCardSet: CardSetType[] = [
 		description: "Test Description",
 		numCards: 3,
 	}
-]
+];
 	
 
 const server: SetupServer = setupServer(
@@ -49,8 +49,8 @@ const server: SetupServer = setupServer(
 		return res(ctx.status(200), ctx.json(mockedCards));
 	}),
 
-	rest.get(`${ process.env.REACT_APP_SERVER_URI }/cardset/oneSet/1`, (_, res, ctx) => {
-		return res(ctx.status(200), ctx.json(mockedCardSet[0].description));
+	rest.get(`${ process.env.REACT_APP_SERVER_URI }/cardset/oneSetDescription/1`, (_, res, ctx) => {
+		return res(ctx.status(200), ctx.json({ description: mockedCardSet[0].description }));
 	}),
 
 	rest.post(`${ process.env.REACT_APP_SERVER_URI }/card/addCard`, (_, res, ctx) => {
