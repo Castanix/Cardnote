@@ -61,7 +61,7 @@ describe("GET tests", () => {
 		expect(response.body).toStrictEqual([{ set_id: 1, name: "Set", description: "Description", numCards: 0, num_cards: 0 }]);
 	});
 
-	test("Getting one card set", async () => {
+	test("Get one card set description", async () => {
 		const response = await request(`${ process.env.REACT_APP_SERVER_URI }`)
 			.get("/cardset/oneSetDescription/1")
 			.set({ test: true });
@@ -69,6 +69,15 @@ describe("GET tests", () => {
 		expect(response.statusCode).toBe(200);
 		expect(response.body.error).toBe(undefined);
 		expect(response.body).toStrictEqual({ description: "Description" });
+	});
+
+	test("Get non-existing card set description", async () => {
+		const response = await request(`${ process.env.REACT_APP_SERVER_URI }`)
+			.get("/cardset/oneSetDescription/2")
+			.set({ test: true });
+    
+		expect(response.statusCode).toBe(404);
+		expect(response.body.error).toBe("Set does not exist");
 	});
 });
 
