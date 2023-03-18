@@ -48,12 +48,12 @@ test("Flashcard renders", async () => {
 	const term = screen.queryByText(/Term 1/i);
 	const term2 = screen.queryByText(/Term 2/i);
 	const term3 = screen.queryByText(/Term 3/i);
-	const leftButton = screen.getByTitle(/previous-card/i);
-	const rightButton = screen.getByTitle(/next-card/i);
+	const leftButtons = screen.getAllByTitle(/previous-card/i); // To account for hidden mobile element
+	const rightButtons = screen.getAllByTitle(/next-card/i);
 	
 	expect(term || term2 || term3).toBeInTheDocument();
-	expect(leftButton).toBeInTheDocument();
-	expect(rightButton).toBeInTheDocument();
+	expect(leftButtons[0]).toBeInTheDocument();
+	expect(rightButtons[0]).toBeInTheDocument();
 });
 
 test("Flashcard flips", async () => {
@@ -72,7 +72,7 @@ test("Flashcard flips", async () => {
 });
 
 test("Flashcard goes to next card", async () => {
-	const nextButton = screen.getByTitle("next-card");
+	const nextButtons = screen.getAllByTitle("next-card");
 	let term = screen.queryByText(/Term 1/i);
 	let term2 = screen.queryByText(/Term 2/i);
 	let term3 = screen.queryByText(/Term 3/i);
@@ -82,7 +82,7 @@ test("Flashcard goes to next card", async () => {
 	if (term2) num = 2;
 	if (term3) num = 3;
 
-	await user.click(nextButton);
+	await user.click(nextButtons[0]);
 
 	switch(num) {
 	case 1:
@@ -119,7 +119,7 @@ test("Flashcard goes to next card", async () => {
 });
 
 test("Flashcard goes to previous card", async () => {
-	const previousButton = screen.getByTitle("previous-card");
+	const previousButtons = screen.getAllByTitle("previous-card");
 	let term = screen.queryByText(/Term 1/i);
 	let term2 = screen.queryByText(/Term 2/i);
 	let term3 = screen.queryByText(/Term 3/i);
@@ -129,7 +129,7 @@ test("Flashcard goes to previous card", async () => {
 	if (term2) num = 2;
 	if (term3) num = 3;
 
-	await user.click(previousButton);
+	await user.click(previousButtons[0]);
 
 	switch(num) {
 	case 1:
