@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { connectMysqlPool } from "../db/dbSetup";
 import { RowDataPacket } from "mysql2";
+import { promisedPool } from "../server";
 
 const cardsetRoute = Router();
 
@@ -9,8 +10,7 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix }`;
@@ -30,7 +30,6 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -40,8 +39,7 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 
 	const { setId } = req.params;
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const existsQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ setId })`;
@@ -79,7 +77,6 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -94,8 +91,7 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const insertQuery =
@@ -124,7 +120,6 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -139,8 +134,7 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
@@ -182,7 +176,6 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -197,8 +190,7 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
@@ -236,7 +228,6 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 

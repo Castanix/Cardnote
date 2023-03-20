@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { connectMysqlPool } from "../db/dbSetup";
 import { RowDataPacket } from "mysql2";
+import { promisedPool } from "../server";
 
 const cardRoute = Router();
 
@@ -10,8 +10,7 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 
 	const { set_id } = req.params;
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
@@ -48,7 +47,6 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -63,8 +61,7 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
@@ -120,7 +117,6 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -135,8 +131,7 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
@@ -194,7 +189,6 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
@@ -209,8 +203,7 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const pool = await connectMysqlPool();
-	const connection = await pool.getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const selectQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
@@ -248,7 +241,6 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 		res.status(503);
 	} finally {
 		connection.release();
-		pool.end();
 	}
 });
 
