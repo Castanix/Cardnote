@@ -46,7 +46,7 @@ const CardSetListItem = ({ set, cardSets }: { set: CardSetType, cardSets: CardSe
 	/* Component functions */
 	const editCardSetHandler = async (isEdit: boolean) => {
 		// Check if edit has been confirmed, if name value exists, and if a change has occurred
-		if (isEdit && nameValue && !(nameValue === currName && descriptionValue === currDescription)) {
+		if (isEdit && nameValue.trim().length > 0 && !(nameValue === currName && descriptionValue === currDescription)) {
 			const status = await UpdateCardSet({ set_id: cardSets[setIndex].set_id, name: nameValue, description: descriptionValue });
 
 			if (status === 204) {
@@ -54,10 +54,10 @@ const CardSetListItem = ({ set, cardSets }: { set: CardSetType, cardSets: CardSe
 				const newSet = { set_id: set.set_id, name: nameValue, description: descriptionValue, numCards: set.numCards };
 				newCardSets[setIndex] = newSet;
 	
-				setCurrName(nameValue);
-				setCurrDescription(descriptionValue);
+				setCurrName(nameValue.trim());
+				setCurrDescription(descriptionValue.trim());
 			} else console.log("Error updating card set");
-		}
+		} else console.log("Invalid inputs");
 
 		setEditable(false);
 	};
