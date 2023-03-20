@@ -14,7 +14,7 @@
 }
 
 .swap-card-container-mobile {
-    display: none;
+    display: none !important;
 }
 
 .swap-card-button:hover {

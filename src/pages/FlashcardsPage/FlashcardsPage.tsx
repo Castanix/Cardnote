@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Button, Card, CardBody, CardFooter, CardHeader } from "reactstrap";
 import Flashcard from "../../components/Flashcard/Flashcard";
@@ -32,13 +32,23 @@ const FlashcardsPage = () => {
 	const [flashcardSet, setFlashcardSet] = useState<CardType[]>(randomizedSet);
 	const [cardIndex, setCardIndex] = useState<number>(0);
 	const [currCard, setCurrCard] = useState<CardType>(flashcardSet[cardIndex]);
+	const animationState = useRef("none");
 
-
-	useEffect(() => {
-		setCurrCard(flashcardSet[cardIndex]);
-	}, [cardIndex]);
 
 	/* Use effects */
+	useEffect(() => {
+		const flashcardEl = document.querySelector(".flashcard");
+		const cardText = document.querySelector(".card-text") as HTMLElement;
+		cardText.style.display = "none";
+
+		setCurrCard(flashcardSet[cardIndex]);
+
+		setTimeout(() => {
+			cardText.style.display = "block";
+			flashcardEl.classList.add(animationState.current);
+		}, 1);
+	}, [cardIndex]);
+
 	useEffect(() => {
 		// Add keyboard event and handler for arrow keys to scroll cards
 		const keyPressEvent = (e: KeyboardEvent) => {
@@ -69,23 +79,18 @@ const FlashcardsPage = () => {
 		if (cardIndex === 0) setCardIndex(flashcardSet.length - 1);
 		else setCardIndex(cardIndex - 1);
 
-		const flashcardEl = document.querySelector(".flashcard");
-
-		// TODO: Discover better way to set entry animations when scrolling to new card from a flipped card.
-		setTimeout(() => flashcardEl.classList.add("entercard-left"), 1);
+		animationState.current = "entercard-left";
 	};
 
 	const handleRight = () => {
 		if (cardIndex === flashcardSet.length - 1) setCardIndex(0);
 		else setCardIndex(cardIndex + 1);
 
-		const flashcardEl = document.querySelector(".flashcard");
-
-		// TODO: Discover better way to set entry animations when scrolling to new card from a flipped card.
-		setTimeout(() => flashcardEl.classList.add("entercard-right"), 1);
+		animationState.current = "entercard-right";
 	};
 
 	const handleRandomize = () => {
+		animationState.current = "none";
 		setFlashcardSet(shuffleSet(cardSet));
 		setCardIndex(0);
 		setCurrCard(flashcardSet[0]);
