@@ -90,18 +90,20 @@ const CardListItem = ({ card, cardSet }: { card: CardType, cardSet: CardType[] }
 	};
 
 	const editCardHandler = async (isEdit: boolean) => {
-		if (isEdit && termValue && definitionValue) {
+		// Check if edit has been confirmed, if term and definition value exists, and if a change has occurred
+		if (isEdit && termValue.trim().length > 0 && definitionValue.trim().length > 0
+			&& !(termValue.trim() === currTerm && definitionValue.trim() === currDefinition)) {
 			const updatedCard = { 
 				card_id: card.card_id, 
-				term: termValue, 
-				definition: definitionValue 
+				term: termValue.trim(), 
+				definition: definitionValue.trim()
 			};
 
 			const status = await UpdateCard(updatedCard);
 			
 			if (status === 204) {
-				setCurrTerm(termValue);
-				setCurrDefinition(definitionValue);
+				setCurrTerm(termValue.trim());
+				setCurrDefinition(definitionValue.trim());
 			} else console.error("Error updating card");			
 		}
 

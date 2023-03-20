@@ -31,10 +31,10 @@ const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardT
 	};
 
 	const addCardHandler = async () => {
-		if (termValue && definitionValue) {
+		if (termValue.trim().length > 0 && definitionValue.trim().length > 0) {
 			const postData = {
-				term: termValue,
-				definition: definitionValue,
+				term: termValue.trim(),
+				definition: definitionValue.trim(),
 				numCards: cardSet.length + 1,
 				set_id: cardSetId
 			};
@@ -44,19 +44,7 @@ const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardT
 			if (!inserted_id) {
 				console.log("Error adding card");
 			}
-
-			// if (inserted_id) {
-			// 	setCardSet([...cardSet,
-			// 		{
-			// 			card_id: inserted_id,
-			// 			term: termValue,
-			// 			definition: definitionValue,
-			// 		}
-			// 	]);
-			// } else {
-			// 	console.log("Error adding card");
-			// }	
-		}
+		} else console.log("Missing input in fields");
 	};
 
 	

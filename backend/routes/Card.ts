@@ -56,7 +56,7 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 
 	const { set_id, term, definition, numCards } = req.body.data;
 
-	if (!(set_id && term && definition && numCards)) {
+	if (!(set_id && term.trim().length > 0 && definition.trim().length > 0 && numCards)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
 	}
@@ -198,7 +198,7 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 
 	const { card_id, term, definition } = req.body.data;
 
-	if (!(card_id && term && definition)) {
+	if (!(card_id && term.trim().length > 0 && definition.trim().length > 0)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
 	}

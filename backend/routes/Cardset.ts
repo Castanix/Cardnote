@@ -184,7 +184,7 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 
 	const { set_id, name, description } = req.body.data;
 
-	if (!(set_id && name && name.trim().length > 0)) {
+	if (!(set_id && name.trim().length > 0)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
 	}
@@ -211,7 +211,7 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 
 		const updateQuery = 
 			`UPDATE card_sets${ suffix } ` +
-			`SET name = "${ name.trim() }", description = "${ description ? description.trim() : "" }" ` +
+			`SET name = "${ (name as string).trim() }", description = "${ description ? (description as string).trim() : "" }" ` +
 			`WHERE set_id = ${ set_id }`;
 
 		await connection.execute(updateQuery)
