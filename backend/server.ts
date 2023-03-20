@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 
 import dotenv from "dotenv";
 import apiRouter from "./api";
+import { connectMysqlPool } from "./db/dbSetup";
+
 dotenv.config({ path: __dirname+"/../.env" });
 
 const app = express();
@@ -16,14 +18,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api", apiRouter);
 
+export const promisedPool = connectMysqlPool();
 
-app.listen(port, () => console.log(`Server listening on port ${port}`));
-// connectMysqlPool()
-// 	.then(() => {
-// 		app.listen(port, () => console.log(`Server listening on port ${port}`));
-// 	})
-// 	.catch((err: Error) => {
-// 		console.error(err);
-// 	});
+Promise.resolve(promisedPool)
+    .then(() => {
+        app.listen(port, () => console.log(`Server listening on port ${port}`));
+    })
+    .catch((err: Error) => {
+        console.error(err);
+    });
 
 export default app;
