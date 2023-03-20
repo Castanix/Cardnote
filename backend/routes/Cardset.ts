@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { RowDataPacket } from "mysql2";
-import { promisedPool } from "../server";
+import { getConnection } from "../server";
 
 const cardsetRoute = Router();
 
@@ -9,7 +9,7 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const connection = await (await promisedPool).getConnection();
+	const connection = await getConnection();
 
 	try {
 		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix }`;
@@ -38,7 +38,7 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 
 	const { setId } = req.params;
 
-	const connection = await (await promisedPool).getConnection();
+	const connection = await getConnection();
 
 	try {
 		const existsQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ setId })`;
@@ -90,7 +90,7 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const connection = await (await promisedPool).getConnection();
+	const connection = await getConnection();
 
 	try {
 		const insertQuery =
@@ -133,7 +133,7 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const connection = await (await promisedPool).getConnection();
+	const connection = await getConnection();
 
 	try {
 		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
@@ -189,7 +189,7 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const connection = await (await promisedPool).getConnection();
+	const connection = await getConnection();
 
 	try {
 		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
