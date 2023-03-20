@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import apiRouter from "./api";
 import { connectMysqlPool } from "./db/dbSetup";
+import { PoolConnection } from "mysql2/promise";
 
 dotenv.config({ path: __dirname+"/../.env" });
 
@@ -18,10 +19,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api", apiRouter);
 
-export const promisedPool = connectMysqlPool();
+let connectionPool: PoolConnection;
+
+const promisedPool = connectMysqlPool();
+
+const newConnectionPool = async () => {
+    connectionPool = await Promise.resolve(promisedPool)
+        .then((result) => {
+            return result.getConnection();
+        });
+};
+
+export const getConnection = async () => {
+    await newConnectionPool();
+
+    return connectionPool;
+};
 
 Promise.resolve(promisedPool)
-	.then(() => {
+	.then(async () => {
 		app.listen(port, () => console.log(`Server listening on port ${port}`));
 	})
 	.catch((err: Error) => {
