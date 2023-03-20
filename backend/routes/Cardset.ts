@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { connectMysqlPool } from "../db/dbSetup";
 import { RowDataPacket } from "mysql2";
 import { promisedPool } from "../server";
 

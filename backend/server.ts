@@ -21,11 +21,11 @@ app.use("/api", apiRouter);
 export const promisedPool = connectMysqlPool();
 
 Promise.resolve(promisedPool)
-    .then(() => {
-        app.listen(port, () => console.log(`Server listening on port ${port}`));
-    })
-    .catch((err: Error) => {
-        console.error(err);
-    });
+	.then(() => {
+		app.listen(port, () => console.log(`Server listening on port ${port}`));
+	})
+	.catch((err: Error) => {
+		console.error(err);
+	});
 
 export default app;
