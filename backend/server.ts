@@ -24,16 +24,16 @@ let connectionPool: PoolConnection;
 const promisedPool = connectMysqlPool();
 
 const newConnectionPool = async () => {
-    connectionPool = await Promise.resolve(promisedPool)
-        .then((result) => {
-            return result.getConnection();
-        });
+	connectionPool = await Promise.resolve(promisedPool)
+		.then((result) => {
+			return result.getConnection();
+		});
 };
 
 export const getConnection = async () => {
-    await newConnectionPool();
+	await newConnectionPool();
 
-    return connectionPool;
+	return connectionPool;
 };
 
 Promise.resolve(promisedPool)
