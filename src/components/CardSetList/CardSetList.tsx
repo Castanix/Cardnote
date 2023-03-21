@@ -82,7 +82,7 @@ const CardSetList = ({ data }: { data: CardSetType[] }) => {
 	return (
 		<section className="card-set-list">
 			
-			<Alert isOpen={ alertCount > 0 } style={{ position: "absolute", width: "100%", top: 0 }}>
+			<Alert isOpen={ alertCount > 0 } style={{ position: "absolute", width: "100%", top: "2rem" }}>
 				<div className="divider-inline">
 					A new set has been added! 
 					<Badge>
@@ -94,9 +94,9 @@ const CardSetList = ({ data }: { data: CardSetType[] }) => {
 				<Input 
 					placeholder="Search set" 
 					value={ searchValue } 
-					onChange={e => {
+					onChange={ e => {
 						setSearchValue(e.target.value);
-					}}
+					} }
 				/>
 			</div>
 			
