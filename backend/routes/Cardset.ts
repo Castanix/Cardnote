@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { RowDataPacket } from "mysql2";
 import { promisedPool } from "../server";
+import verifyToken from "../middlewares/authorization";
 
 const cardsetRoute = Router();
 
@@ -9,10 +10,12 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
+	const user = test ? "public" : req.body.user;
+
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix }`;
+		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix } WHERE username = ${ user }`;
 
 		connection.execute(selectQuery)
 			.then(result => {
@@ -37,6 +40,7 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 	const suffix = test ? "_test" : "";
 
 	const { setId } = req.params;
+	const user = test ? "public" : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
@@ -50,6 +54,12 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 					res.status(404).send({ error: "Set does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username !== user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {
@@ -83,19 +93,14 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const { name, description } = req.body.data;
-
-	if (!(name && description)) {
-		res.status(400).send({ error: "Data is missing fields" });
-		return;
-	}
+	const user = test ? "public" : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const insertQuery =
-			`INSERT INTO card_sets${ suffix } (name, description) ` +
-			`VALUES ("${ name }", "${ description }")`;
+			`INSERT INTO card_sets${ suffix } (name, description, username) ` +
+			`VALUES ("Add Name", "Add Description", "${ user }")`;
 		
 		const selectQuery = "SELECT LAST_INSERT_ID() AS inserted_id";
 
@@ -133,6 +138,8 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
+	const user = test ? "public" : req.body.user;
+
 	const connection = await (await promisedPool).getConnection();
 
 	try {
@@ -145,6 +152,12 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Set does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username !== user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {
@@ -189,6 +202,8 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 		return;
 	}
 
+	const user = test ? "public" : req.body.user;
+
 	const connection = await (await promisedPool).getConnection();
 
 	try {
@@ -201,6 +216,12 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Set does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username !== user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {

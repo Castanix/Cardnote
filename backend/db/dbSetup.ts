@@ -1,4 +1,5 @@
 import { createPool, Pool } from "mysql2/promise";
+import { exec } from "child_process";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname+"/../../.env" });
 
@@ -20,13 +21,24 @@ export const connectMysqlPool = async () => {
 	return pool;
 };
 
+const createAccountsTable = (test?: boolean) =>
+	`CREATE TABLE IF NOT EXISTS accounts${ test ? "_test" : "" }(` +
+        "account_id INT NOT NULL AUTO_INCREMENT," +
+        "username VARCHAR(32) NOT NULL UNIQUE," +
+        "password VARCHAR(64) NOT NULL," +
+        "salt VARCHAR(6) NOT NULL," +
+        "PRIMARY KEY (account_id)" +
+    ")";
+
 const createCardSetsTable = (test?: boolean) =>
 	`CREATE TABLE IF NOT EXISTS card_sets${ test ? "_test" : "" }(` +
         "set_id INT NOT NULL AUTO_INCREMENT," +
         "name VARCHAR(255) NOT NULL," +
         "description VARCHAR(510) NULL," +
         "num_cards INT NOT NULL DEFAULT 0," +
-        "PRIMARY KEY (set_id)" +
+		"username VARCHAR(32) NOT NULL," +
+        "PRIMARY KEY (set_id)," +
+		`FOREIGN KEY (username) REFERENCES accounts${ test ? "_test" : "" }(username)` +
     ")";
 
 const createCardsTable = (test?: boolean) =>
@@ -45,22 +57,64 @@ export const setupDB = async (test?: boolean) => {
 	const connection = await pool.getConnection();
 
 	try {
-		const query = createCardSetsTable(test);
+		// Unset foreign keys
+		const unsetKeysQuery = "SET FOREIGN_KEY_CHECKS = 0";
 
-		await connection.execute(query)
+		await connection.execute(unsetKeysQuery)
+			.catch((err: string) => {
+				throw new Error(err);
+			});
+
+		connection.unprepare(unsetKeysQuery);
+
+		exec(
+			// `mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db -s -e 'show tables' | sed -e 's/^/drop table /' -e 's/$/;/' > dropalltables.sql; ` +
+			`mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db  < ./db/dropalltables.sql `,
+		(error) => {
+			if (error) {
+				console.log("error ");
+				return;
+			}
+		});
+
+		await new Promise(r => setTimeout(r, 2000));
+
+		const accountsQuery = createAccountsTable(test);
+
+		await connection.execute(accountsQuery)
+			.catch((err: string) => {
+				throw new Error(err);
+			});
+        
+		connection.unprepare(createAccountsTable(test));
+
+		const cardsetsQuery = createCardSetsTable(test);
+
+		await connection.execute(cardsetsQuery)
 			.catch((err: string) => {
 				throw new Error(err);
 			});
         
 		connection.unprepare(createCardSetsTable(test));
 
-		const query2 = createCardsTable(test);
-		await connection.execute(query2)
+		const cardsQuery = createCardsTable(test);
+		await connection.execute(cardsQuery)
 			.catch((err: string) => {
 				throw new Error(err);
 			});
 
 		connection.unprepare(createCardsTable(test));
+
+		// Create public account
+		const insertPublicQuery = `INSERT INTO accounts${ test ? "_test" : "" } (username, password, salt) VALUES ("public", "", "")`;
+
+		await connection.execute(insertPublicQuery)
+			.catch((err: string) => {
+				throw new Error(err);
+			});
+		
+		connection.unprepare(insertPublicQuery);
+
 	} catch (err) {
 		console.log(err);
 	} finally {
@@ -70,4 +124,4 @@ export const setupDB = async (test?: boolean) => {
 	await pool.end();
 };
 
-// setupDB();
+setupDB();

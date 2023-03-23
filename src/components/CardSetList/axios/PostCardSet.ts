@@ -13,10 +13,6 @@ const axiosPostCardSet = async () => {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		data: {
-			name: "Add name",
-			description: "Add description",
-		},
 	})
 		.then(result => result.data)
 		.catch(err => {

@@ -9,6 +9,7 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 	const suffix = test ? "_test" : "";
 
 	const { set_id } = req.params;
+	const user = test ? "public" : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
@@ -22,6 +23,12 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card set does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username !== user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {
@@ -61,6 +68,8 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 		return;
 	}
 
+	const user = test ? "public" : req.body.user;
+
 	const connection = await (await promisedPool).getConnection();
 
 	try {
@@ -73,6 +82,12 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card set does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username !== user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {
@@ -131,6 +146,8 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 		return;
 	}
 
+	const user = test ? "public" : req.body.user;
+
 	const connection = await (await promisedPool).getConnection();
 
 	try {
@@ -144,6 +161,12 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card set does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username != user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {
@@ -203,6 +226,8 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 		return;
 	}
 
+	const user = test ? "public" : req.body.user;
+
 	const connection = await (await promisedPool).getConnection();
 
 	try {
@@ -215,6 +240,12 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card does not exist" });
 					return false;
 				}
+
+				if (Object.values(data[0])[0].username !== user) {
+					res.status(403).send({ error: "You do not have permission" });
+					return false;
+				}
+
 				return true;
 			})
 			.catch(err => {
