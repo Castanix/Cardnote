@@ -8,12 +8,15 @@ type PostCardResType = {
 
 const axiosPostCard = async (postedCard: AddCardType) => {
 	const { term, definition, numCards, set_id } = postedCard;
+	const accessToken = sessionStorage.getItem("accessToken") ?? "public";
+	console.log(accessToken);
 
 	return await axios.post(`${ process.env.REACT_APP_SERVER_URI }/card/addCard`, {
 		method: "post",
 		timeout: 10000,
 		headers: {
 			"Content-Type": "application/json",
+			"Authorization": `Bearer ${ accessToken }`,
 		},
 		data: {
 			term,

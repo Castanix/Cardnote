@@ -3,11 +3,14 @@ import { queryClient } from "../../../App";
 
 
 const axiosDeleteCardSet = async (set_id: number) => {
+	const accessToken = sessionStorage.getItem("accessToken") ?? "public";
+
 	return await axios.delete(`${ process.env.REACT_APP_SERVER_URI }/cardset/deleteCardSet`, {
 		method: "delete",
 		timeout: 10000,
 		headers: {
 			"Content-Type": "application/json",
+			"Authorization": `Bearer ${ accessToken }`,
 		},
 		data: {
 			set_id,

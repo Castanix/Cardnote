@@ -71,12 +71,12 @@ export const setupDB = async (test?: boolean) => {
 		exec(
 			// `mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db -s -e 'show tables' | sed -e 's/^/drop table /' -e 's/$/;/' > dropalltables.sql; ` +
 			`mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db  < ./db/dropalltables.sql `,
-		(error) => {
-			if (error) {
-				console.log("error ");
-				return;
-			}
-		});
+			(error) => {
+				if (error) {
+					console.log("error");
+					return;
+				}
+			});
 
 		await new Promise(r => setTimeout(r, 2000));
 

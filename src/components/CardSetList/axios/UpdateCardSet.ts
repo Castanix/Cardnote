@@ -5,12 +5,14 @@ import { EditCardSetType } from "../CardSetListItem";
 
 const axiosUpdateCardSet = async (updatedSet: EditCardSetType) => {
 	const { set_id, name, description } = updatedSet;
+	const accessToken = sessionStorage.getItem("accessToken") ?? "public";
 
 	return await axios.put(`${ process.env.REACT_APP_SERVER_URI }/cardset/updateCardSet`, {
 		method: "put",
 		timeout: 10000,
 		headers: {
 			"Content-Type": "application/json",
+			"Authorization": `Bearer ${ accessToken }`,
 		},
 		data: {
 			set_id,

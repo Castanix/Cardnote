@@ -9,12 +9,12 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const user = test ? { username: "public" } : req.body.user;
+	const user = test ? "public" : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix } WHERE username = "${ user.username }"`;
+		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix } WHERE username = "${ user }"`;
 
 		connection.execute(selectQuery)
 			.then(result => {
@@ -26,7 +26,7 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -44,18 +44,13 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const existsQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ setId })`;
+		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ setId } AND username = "${ user }")`;
 
-		const exists = await connection.execute(existsQuery)
+		const exists = await connection.execute(selectQuery)
 			.then(result => {
 				const data = result[0] as RowDataPacket[];
 				if (Object.values(data[0])[0] <= 0) {
 					res.status(404).send({ error: "Set does not exist" });
-					return false;
-				}
-
-				if (Object.values(data[0])[0].username !== user) {
-					res.status(403).send({ error: "You do not have permission" });
 					return false;
 				}
 
@@ -67,7 +62,7 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 
 		if (!exists) return;
 
-		const selectQuery = `SELECT description FROM card_sets${ suffix } WHERE set_id = ${ setId }`;
+		selectQuery = `SELECT description FROM card_sets${ suffix } WHERE set_id = ${ setId }`;
 
 		connection.execute(selectQuery)
 			.then(result => {
@@ -80,7 +75,7 @@ cardsetRoute.get("/oneSetDescription/:setId", async (req: Request, res: Response
 			});
 
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -92,14 +87,14 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const user = test ? { username: "public" } : req.body.user;
+	const user = test ? "public" : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const insertQuery =
 			`INSERT INTO card_sets${ suffix } (name, description, username) ` +
-			`VALUES ("Add Name", "Add Description", "${ user.username }")`;
+			`VALUES ("Add Name", "Add Description", "${ user }")`;
 		
 		const selectQuery = "SELECT LAST_INSERT_ID() AS inserted_id";
 
@@ -118,7 +113,7 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -142,18 +137,13 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
 				const data = result[0] as RowDataPacket[];
 				if (Object.values(data[0])[0] <= 0) {
 					res.status(404).send({ error: "Set does not exist" });
-					return false;
-				}
-
-				if (Object.values(data[0])[0].username !== user) {
-					res.status(403).send({ error: "You do not have permission" });
 					return false;
 				}
 
@@ -182,7 +172,7 @@ cardsetRoute.delete("/deleteCardSet", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -206,18 +196,13 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		const selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
 				const data = result[0] as RowDataPacket[];
 				if (Object.values(data[0])[0] <= 0) {
 					res.status(404).send({ error: "Set does not exist" });
-					return false;
-				}
-
-				if (Object.values(data[0])[0].username !== user) {
-					res.status(403).send({ error: "You do not have permission" });
 					return false;
 				}
 
@@ -242,7 +227,7 @@ cardsetRoute.put("/updateCardSet", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
