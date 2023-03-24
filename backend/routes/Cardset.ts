@@ -1,7 +1,6 @@
 import { Request, Response, Router } from "express";
 import { RowDataPacket } from "mysql2";
 import { promisedPool } from "../server";
-import verifyToken from "../middlewares/authorization";
 
 const cardsetRoute = Router();
 
@@ -10,12 +9,12 @@ cardsetRoute.get("/allSets", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const user = test ? "public" : req.body.user;
+	const user = test ? { username: "public" } : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix } WHERE username = ${ user }`;
+		const selectQuery = `SELECT *, num_cards AS numCards FROM card_sets${ suffix } WHERE username = "${ user.username }"`;
 
 		connection.execute(selectQuery)
 			.then(result => {
@@ -93,14 +92,14 @@ cardsetRoute.post("/addCardSet", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const user = test ? "public" : req.body.user;
+	const user = test ? { username: "public" } : req.body.user;
 
 	const connection = await (await promisedPool).getConnection();
 
 	try {
 		const insertQuery =
 			`INSERT INTO card_sets${ suffix } (name, description, username) ` +
-			`VALUES ("Add Name", "Add Description", "${ user }")`;
+			`VALUES ("Add Name", "Add Description", "${ user.username }")`;
 		
 		const selectQuery = "SELECT LAST_INSERT_ID() AS inserted_id";
 

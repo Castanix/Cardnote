@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import apiRouter from "./api";
 import { connectMysqlPool } from "./db/dbSetup";
-import verifyToken from "./middlewares/authorization";
+import { verifyToken } from "./middlewares/authorization";
 
 dotenv.config({ path: __dirname+"/../.env" });
 

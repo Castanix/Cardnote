@@ -1,6 +1,7 @@
 import { createPool, Pool } from "mysql2/promise";
 import { exec } from "child_process";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 dotenv.config({ path: __dirname+"/../../.env" });
 
 export const connectMysqlPool = async () => {
@@ -25,8 +26,8 @@ const createAccountsTable = (test?: boolean) =>
 	`CREATE TABLE IF NOT EXISTS accounts${ test ? "_test" : "" }(` +
         "account_id INT NOT NULL AUTO_INCREMENT," +
         "username VARCHAR(32) NOT NULL UNIQUE," +
-        "password VARCHAR(64) NOT NULL," +
-        "salt VARCHAR(6) NOT NULL," +
+        "password_hash VARCHAR(64) NOT NULL," +
+        "salt VARCHAR(32) NOT NULL," +
         "PRIMARY KEY (account_id)" +
     ")";
 
@@ -106,7 +107,7 @@ export const setupDB = async (test?: boolean) => {
 		connection.unprepare(createCardsTable(test));
 
 		// Create public account
-		const insertPublicQuery = `INSERT INTO accounts${ test ? "_test" : "" } (username, password, salt) VALUES ("public", "", "")`;
+		const insertPublicQuery = `INSERT INTO accounts${ test ? "_test" : "" } (username, password_hash, salt) VALUES ("public", "", "")`;
 
 		await connection.execute(insertPublicQuery)
 			.catch((err: string) => {
@@ -115,6 +116,26 @@ export const setupDB = async (test?: boolean) => {
 		
 		connection.unprepare(insertPublicQuery);
 
+		// Create personal account
+		const promise = new Promise(() => bcrypt.genSalt(10, (err, salt) => {
+			if (err) throw err;
+
+			bcrypt.hash(process.env.PERSONAL_PASSWORD as string, salt, async (err, hash) => {
+				if (err) throw err;
+
+				const insertPersonalQuery = `INSERT INTO accounts${ test ? "_test" : "" } (username, password_hash, salt) VALUES ("Castanix", "${ hash }", "${ salt }")`;
+
+				await connection.execute(insertPersonalQuery)
+					.catch((err: string) => {
+						throw new Error(err);
+					});
+				
+				connection.unprepare(insertPersonalQuery);
+			});
+		}));
+
+		await promise;
+		
 	} catch (err) {
 		console.log(err);
 	} finally {
@@ -123,5 +144,3 @@ export const setupDB = async (test?: boolean) => {
 
 	await pool.end();
 };
-
-setupDB();

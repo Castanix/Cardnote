@@ -23,4 +23,11 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     return next();
 };
 
-export default verifyToken;
+const generateAccessToken = (username: string) => {
+    return jwt.sign({ username }, config.SECRET_TOKEN as Secret, { expiresIn: '6h' });
+};
+
+export {
+    verifyToken,
+    generateAccessToken
+};

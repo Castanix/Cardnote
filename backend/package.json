@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node ./server.ts",
     "test": "jest --runInBand",
-    "setupDB": "ts-node ./db/dbSetup.ts &"
+    "setupDB": "ts-node ./db/runSetup.ts &"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "supertest": "^6.3.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/mysql": "^2.15.21",
