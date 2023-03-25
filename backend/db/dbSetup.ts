@@ -14,7 +14,7 @@ export const connectMysqlPool = async () => {
 			waitForConnections: true,
 			connectionLimit: 10,
 			maxIdle: 8,
-			idleTimeout: 60000,
+			idleTimeout: 0,
 			queueLimit: 0
 		}
 	);

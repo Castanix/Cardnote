@@ -3,7 +3,7 @@ import { UpdateCardType } from "../CardListItem";
 import { queryClient } from "../../../App";
 
 const axiosUpdateCard = async (updatedCard: UpdateCardType) => {
-	const { card_id, term, definition } = updatedCard;
+	const { card_id, term, definition, set_id } = updatedCard;
 	const accessToken = sessionStorage.getItem("accessToken") ?? "public";
 
 	return await axios.put(`${ process.env.REACT_APP_SERVER_URI }/card/updateCard`, {
@@ -17,6 +17,7 @@ const axiosUpdateCard = async (updatedCard: UpdateCardType) => {
 			card_id,
 			term,
 			definition,
+			set_id,
 		},
 	})
 		.then(result => result.status)
