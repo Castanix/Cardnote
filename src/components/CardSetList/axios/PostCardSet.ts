@@ -7,15 +7,14 @@ type PostCardSetResType = {
 
 
 const axiosPostCardSet = async () => {
+	const accessToken = sessionStorage.getItem("accessToken") ?? "public";
+
 	return await axios.post(`${ process.env.REACT_APP_SERVER_URI }/cardset/addCardSet`, {
 		method: "post",
 		timeout: 10000,
 		headers: {
 			"Content-Type": "application/json",
-		},
-		data: {
-			name: "Add name",
-			description: "Add description",
+			"Authorization": `Bearer ${ accessToken }`,
 		},
 	})
 		.then(result => result.data)

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { RowDataPacket } from "mysql2";
-import { getConnection } from "../server";
+import { promisedPool } from "../server";
 
 const cardRoute = Router();
 
@@ -9,11 +9,12 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 	const suffix = test ? "_test" : "";
 
 	const { set_id } = req.params;
+	const user = test ? "public" : req.body.user;
 
-	const connection = await getConnection();
+	const connection = await (await promisedPool).getConnection();
 
 	try {
-		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
@@ -22,6 +23,7 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card set does not exist" });
 					return false;
 				}
+
 				return true;
 			})
 			.catch(err => {
@@ -42,7 +44,7 @@ cardRoute.get("/allCards/:set_id", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -61,10 +63,12 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 		return;
 	}
 
-	const connection = await getConnection();
+	const user = test ? "public" : req.body.user;
+
+	const connection = await (await promisedPool).getConnection();
 
 	try {
-		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		let selectQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
 
 		const exists = await connection.execute(selectQuery)
 			.then(result => {
@@ -73,6 +77,7 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card set does not exist" });
 					return false;
 				}
+
 				return true;
 			})
 			.catch(err => {
@@ -112,7 +117,7 @@ cardRoute.post("/addCard", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -126,15 +131,17 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 
 	const { card_id, set_id, numCards } = req.body;
 
-	if (!(card_id && set_id && numCards)) {
+	if (!(card_id && set_id && typeof(numCards) === "number")) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
 	}
 
-	const connection = await getConnection();
+	const user = test ? "public" : req.body.user;
+
+	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id })`;
+		const selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
 		const selectCardQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
 
 		const setExists = await connection.execute(selectSetQuery)
@@ -144,6 +151,7 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 					res.status(404).send({ error: "Card set does not exist" });
 					return false;
 				}
+
 				return true;
 			})
 			.catch(err => {
@@ -184,7 +192,7 @@ cardRoute.delete("/deleteCard", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {
@@ -196,32 +204,50 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const { card_id, term, definition } = req.body.data;
+	const { card_id, term, definition, set_id } = req.body.data;
 
-	if (!(card_id && term.trim().length > 0 && definition.trim().length > 0)) {
+	if (!(card_id && term && definition && set_id)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
 	}
 
-	const connection = await getConnection();
+	const user = test ? "public" : req.body.user;
+
+	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
+		const selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
+		const selectCardQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
 
-		const exists = await connection.execute(selectQuery)
+		const setExists = await connection.execute(selectSetQuery)
 			.then(result => {
 				const data = result[0] as RowDataPacket[];
 				if (Object.values(data[0])[0] <= 0) {
-					res.status(404).send({ error: "Card does not exist" });
+					res.status(404).send({ error: "Set does not exist" });
 					return false;
 				}
+
 				return true;
 			})
 			.catch(err => {
 				throw new Error(err);
 			});
 
-		if (!exists) return;
+		const cardExists = await connection.execute(selectCardQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Card does not exist" });
+					return false;
+				}
+
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		if (!(setExists && cardExists)) return;
 
 		const updateQuery = 
             `UPDATE cards${ suffix } ` +
@@ -236,7 +262,7 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 
 		res.status(503);
 	} finally {

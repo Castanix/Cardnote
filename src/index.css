@@ -31,6 +31,7 @@ a {
 .page-margin {
   margin: auto;
   width: 80%;
+  padding-block: 2rem;
 }
 
 .divider-inline > * {

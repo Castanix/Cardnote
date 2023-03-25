@@ -1,0 +1,23 @@
+.navbar {
+    position: relative;
+}
+
+.authentication-toast {
+    position: absolute;
+    top: 5rem;
+    right: 0.5rem;
+}
+
+.login-button {
+    cursor: pointer;
+
+    /* Prevents text highlight */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.login-button:hover,
+.login-button:focus {
+    color: rgba(255, 255, 255, 0.85);
+}

@@ -9,10 +9,11 @@ const request = supertest;
 const baseURL = "http://localhost:8000";
 
 const dummySetReq = {
-	name: "Set",
+	name: "Name",
 	description: "Description",
 	num_cards: 0,
-	set_id: 1
+	set_id: 1,
+	username: "public",
 };
 
 afterEach(async () => {
@@ -20,14 +21,19 @@ afterEach(async () => {
 	const connection = await pool.getConnection();
 
 	try {
-		const dropQuery = "DROP TABLE cards_test";
-		const dropQuery2 = "DROP TABLE card_sets_test";
+		const dropQuery = "DROP TABLE IF EXISTS cards_test";
+		const dropQuery2 = "DROP TABLE IF EXISTS card_sets_test";
+		const dropQuery3 = "DROP TABLE IF EXISTS accounts_test";
 
 		await connection.execute(dropQuery)
 			.catch(err => {
 				throw new Error(err);
 			});
 		await connection.execute(dropQuery2)
+			.catch(err => {
+				throw new Error(err);
+			});
+		await connection.execute(dropQuery3)
 			.catch(err => {
 				throw new Error(err);
 			});
@@ -58,7 +64,7 @@ describe("GET tests", () => {
     
 		expect(response.statusCode).toBe(200);
 		expect(response.body.error).toBe(undefined);
-		expect(response.body).toStrictEqual([{ set_id: 1, name: "Set", description: "Description", numCards: 0, num_cards: 0 }]);
+		expect(response.body).toStrictEqual([{ set_id: 1, name: "Add Name", description: "Add Description", numCards: 0, num_cards: 0, username: "public" }]);
 	});
 
 	test("Get one card set description", async () => {
@@ -68,7 +74,7 @@ describe("GET tests", () => {
     
 		expect(response.statusCode).toBe(200);
 		expect(response.body.error).toBe(undefined);
-		expect(response.body).toStrictEqual({ description: "Description" });
+		expect(response.body).toStrictEqual({ description: "Add Description" });
 	});
 
 	test("Get non-existing card set description", async () => {
@@ -107,17 +113,7 @@ describe("POST tests", () => {
 			.get("/cardset/allSets")
 			.set({ test: true });
         
-		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Set", description: "Description", numCards: 0, num_cards: 0 }]);
-	});
-
-	test("Add card sets with missing data in req", async () => {
-		const postResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
-			.post("/cardset/addCardSet")
-			.set({ test: true })
-			.send({ data: {} });
-    
-		expect(postResponse.statusCode).toBe(400);
-		expect(postResponse.body.error).toBe("Data is missing fields");
+		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Add Name", description: "Add Description", numCards: 0, num_cards: 0, username: "public" }]);
 	});
 });
 
@@ -137,7 +133,7 @@ describe("DELETE tests", () => {
 			.get("/cardset/allSets")
 			.set({ test: true });
         
-		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Set", description: "Description", numCards: 0, num_cards: 0 }]);
+		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Add Name", description: "Add Description", numCards: 0, num_cards: 0, username: "public" }]);
 
 		const deleteResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
 			.delete("/cardset/deleteCardSet")
@@ -173,6 +169,18 @@ describe("DELETE tests", () => {
 		expect(deleteResponse.statusCode).toBe(404);
 		expect(deleteResponse.body.error).toBe("Set does not exist");
 	});
+
+
+	// Only need to be tested once because invalid bearer tokens get blocked in authorization middleware
+	test("Delete unowned set", async () => {
+		const deleteResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
+			.delete("/cardset/deleteCardSet")
+			.set({ test: true, authorization: "Bearer notpublic" })
+			.send(dummySetReq);
+    
+		expect(deleteResponse.statusCode).toBe(401);
+		expect(deleteResponse.body.error).toBe("Invalid token");
+	});
 });
 
 
@@ -191,12 +199,12 @@ describe("UPDATE tests", () => {
 			.get("/cardset/allSets")
 			.set({ test: true });
         
-		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Set", description: "Description", numCards: 0, num_cards: 0 }]);
+		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Add Name", description: "Add Description", numCards: 0, num_cards: 0, username: "public" }]);
 
 		const updateResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
 			.put("/cardset/updateCardSet")
 			.set({ test: true })
-			.send({ data: { set_id: 1, name: "Updated Set", description: "Updated Description" } });
+			.send({ data: { set_id: 1, name: "Updated Name", description: "Updated Description" } });
     
 		expect(updateResponse.statusCode).toBe(204);
 		expect(updateResponse.body.error).toBe(undefined);
@@ -205,10 +213,10 @@ describe("UPDATE tests", () => {
 			.get("/cardset/allSets")
 			.set({ test: true });
         
-		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Updated Set", description: "Updated Description", numCards: 0, num_cards: 0 }]);
+		expect(getResponse.body).toStrictEqual([{ set_id: 1, name: "Updated Name", description: "Updated Description", numCards: 0, num_cards: 0, username: "public" }]);
 	});
 
-	test("Update card with missing data in req", async () => {
+	test("Update card set with missing data in req", async () => {
 		const updateResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
 			.put("/cardset/updateCardSet")
 			.set({ test: true })
@@ -218,7 +226,7 @@ describe("UPDATE tests", () => {
 		expect(updateResponse.body.error).toBe("Data is missing fields");
 	});
 
-	test("Update non-existing card", async () => {
+	test("Update non-existing card set", async () => {
 		const updateResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
 			.put("/cardset/updateCardSet")
 			.set({ test: true })

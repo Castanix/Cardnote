@@ -6,6 +6,7 @@ import CardSetPage from "./pages/CardSetPage/CardSetPage";
 import FlashcardsPage from "./pages/FlashcardsPage/FlashcardsPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import Topbar from "./components/Topbar/Topbar";
 
 export const queryClient = new QueryClient(
 	{ 
@@ -23,7 +24,7 @@ const App = () => {
 			<BrowserRouter>
 				<QueryClientProvider client={ queryClient }>
 					<Routes>
-						<Route path="/" element={ <CardSetListPage /> } />
+						<Route path="/" element={ <><Topbar /><CardSetListPage /></> } />
 						<Route path="/:cardSetName/:cardSetId" element={ <CardSetPage /> } />
 						<Route path="/:cardSetName/:cardSetId/flashcard" element={ <FlashcardsPage /> } />
 					</Routes>
