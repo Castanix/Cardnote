@@ -14,6 +14,7 @@ export type UpdateCardType = {
 	card_id: number,
 	term: string,
 	definition: string,
+	set_id: number,
 };
 
 
@@ -94,7 +95,8 @@ const CardListItem = ({ card, cardSet }: { card: CardType, cardSet: CardType[] }
 			const updatedCard = { 
 				card_id: card.card_id, 
 				term: termValue, 
-				definition: definitionValue 
+				definition: definitionValue,
+				set_id: card.set_id,
 			};
 
 			const status = await UpdateCard(updatedCard);

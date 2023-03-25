@@ -68,17 +68,19 @@ export const setupDB = async (test?: boolean) => {
 
 		connection.unprepare(unsetKeysQuery);
 
-		exec(
-			// `mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db -s -e 'show tables' | sed -e 's/^/drop table /' -e 's/$/;/' > dropalltables.sql; ` +
-			`mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db  < ./db/dropalltables.sql `,
-			(error) => {
-				if (error) {
-					console.log("error");
-					return;
-				}
-			});
-
-		await new Promise(r => setTimeout(r, 2000));
+		if (!test) {
+			exec(
+				// `mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db -s -e 'show tables' | sed -e 's/^/drop table /' -e 's/$/;/' > dropalltables.sql; ` +
+				`mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db  < ./db/dropalltables.sql `,
+				(error) => {
+					if (error) {
+						console.log("error");
+						return;
+					}
+				});
+	
+			await new Promise(r => setTimeout(r, 2000));
+		}
 
 		const accountsQuery = createAccountsTable(test);
 
@@ -116,25 +118,27 @@ export const setupDB = async (test?: boolean) => {
 		
 		connection.unprepare(insertPublicQuery);
 
-		// Create personal account
-		const promise = new Promise(() => bcrypt.genSalt(10, (err, salt) => {
-			if (err) throw err;
-
-			bcrypt.hash(process.env.PERSONAL_PASSWORD as string, salt, async (err, hash) => {
+		if (!test) {
+			// Create personal account
+			const promise = new Promise(() => bcrypt.genSalt(10, (err, salt) => {
 				if (err) throw err;
 
-				const insertPersonalQuery = `INSERT INTO accounts${ test ? "_test" : "" } (username, password_hash, salt) VALUES ("Castanix", "${ hash }", "${ salt }")`;
+				bcrypt.hash(process.env.PERSONAL_PASSWORD as string, salt, async (err, hash) => {
+					if (err) throw err;
 
-				await connection.execute(insertPersonalQuery)
-					.catch((err: string) => {
-						throw new Error(err);
-					});
-				
-				connection.unprepare(insertPersonalQuery);
-			});
-		}));
+					const insertPersonalQuery = `INSERT INTO accounts (username, password_hash, salt) VALUES ("Castanix", "${ hash }", "${ salt }")`;
 
-		await promise;
+					await connection.execute(insertPersonalQuery)
+						.catch((err: string) => {
+							throw new Error(err);
+						});
+					
+					connection.unprepare(insertPersonalQuery);
+				});
+			}));
+
+			await promise;
+		}
 		
 	} catch (err) {
 		console.log(err);

@@ -12,6 +12,7 @@ const dummySetReq = {
 	name: "Set",
 	description: "Description",
 	num_cards: 0,
+	username: "public",
 };
 
 const dummyCardReq = {
@@ -55,14 +56,19 @@ afterAll(async () => {
 	const connection = await pool.getConnection();
 
 	try {
-		const dropQuery = "DROP TABLE cards_test";
-		const dropQuery2 = "DROP TABLE card_sets_test";
+		const dropQuery = "DROP TABLE IF EXISTS cards_test";
+		const dropQuery2 = "DROP TABLE IF EXISTS card_sets_test";
+		const dropQuery3 = "DROP TABLE IF EXISTS accounts_test";
 
 		await connection.execute(dropQuery)
 			.catch(err => {
 				throw new Error(err);
 			});
 		await connection.execute(dropQuery2)
+			.catch(err => {
+				throw new Error(err);
+			});
+		await connection.execute(dropQuery3)
 			.catch(err => {
 				throw new Error(err);
 			});
@@ -237,7 +243,7 @@ describe("UPDATE tests", () => {
 		const updateResponse = await request(`${ process.env.REACT_APP_SERVER_URI }`)
 			.put("/card/updateCard")
 			.set({ test: true })
-			.send({ data: { card_id: 1, term: "Updated Term", definition: "Updated Definition" } });
+			.send({ data: { card_id: 1, term: "Updated Term", definition: "Updated Definition", set_id: 1 } });
     
 		expect(updateResponse.statusCode).toBe(204);
 		expect(updateResponse.body.error).toBe(undefined);

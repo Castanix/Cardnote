@@ -204,9 +204,9 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 	const { test } = req.headers;
 	const suffix = test ? "_test" : "";
 
-	const { card_id, term, definition } = req.body.data;
+	const { card_id, term, definition, set_id } = req.body.data;
 
-	if (!(card_id && term && definition)) {
+	if (!(card_id && term && definition && set_id)) {
 		res.status(400).send({ error: "Data is missing fields" });
 		return;
 	}
@@ -216,9 +216,24 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 	const connection = await (await promisedPool).getConnection();
 
 	try {
-		const selectQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id } AND username = "${ user }")`;
+		const selectSetQuery = `SELECT EXISTS(SELECT * FROM card_sets${ suffix } WHERE set_id = ${ set_id } AND username = "${ user }")`;
+		const selectCardQuery = `SELECT EXISTS(SELECT * FROM cards${ suffix } WHERE card_id = ${ card_id })`;
 
-		const exists = await connection.execute(selectQuery)
+		const setExists = await connection.execute(selectSetQuery)
+			.then(result => {
+				const data = result[0] as RowDataPacket[];
+				if (Object.values(data[0])[0] <= 0) {
+					res.status(404).send({ error: "Set does not exist" });
+					return false;
+				}
+
+				return true;
+			})
+			.catch(err => {
+				throw new Error(err);
+			});
+
+		const cardExists = await connection.execute(selectCardQuery)
 			.then(result => {
 				const data = result[0] as RowDataPacket[];
 				if (Object.values(data[0])[0] <= 0) {
@@ -232,7 +247,7 @@ cardRoute.put("/updateCard", async (req: Request, res: Response) => {
 				throw new Error(err);
 			});
 
-		if (!exists) return;
+		if (!(setExists && cardExists)) return;
 
 		const updateQuery = 
             `UPDATE cards${ suffix } ` +

@@ -14,7 +14,7 @@ accountRoute.post("/login", async (req: Request, res: Response) => {
 
 	const { username, password } = req.body.data;
 
-    if (!(username && password)) {
+	if (!(username && password)) {
 		res.status(401).send({ error: "Credentials missing" });
 		return;
 	}
