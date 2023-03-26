@@ -10,7 +10,7 @@ export const connectMysqlPool = async () => {
 			host: process.env.DB_HOST,
 			user: process.env.DB_USER,
 			password: process.env.DB_PASSWORD,
-			database: "cardnote_db",
+			database: process.env.DB_NAME,
 			waitForConnections: true,
 			connectionLimit: 10,
 			maxIdle: 8,
@@ -71,7 +71,7 @@ export const setupDB = async (test?: boolean) => {
 		if (!test) {
 			exec(
 				// `mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db -s -e 'show tables' | sed -e 's/^/drop table /' -e 's/$/;/' > dropalltables.sql; ` +
-				`mysql -u${process.env.DB_USER} -p"${process.env.DB_PASSWORD}" cardnote_db  < ./db/dropalltables.sql `,
+				`mysql -u${ process.env.DB_USER } -p"${ process.env.DB_PASSWORD }" -h"${ process.env.DB_HOST }" -P"${ process.env.DB_PORT }" ${ process.env.DB_NAME } < ./db/dropalltables.sql `,
 				(error) => {
 					if (error) {
 						console.log("error");
