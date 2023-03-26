@@ -1,0 +1,120 @@
+.flashcard {
+    width: 80%;
+    margin-block: 2%;
+    padding-block: 16.25%;
+    left: 0vw;
+}
+
+.entercard-right {
+    animation-name: enter-right;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; 
+}
+
+.entercard-left {
+    animation-name: enter-left;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; 
+}
+
+
+.flip {
+    animation-name: flipcard;
+    animation-duration: 0.6s;
+    animation-fill-mode: forwards;
+}
+
+.flip-reverse {
+    animation-name: flipcard-reverse;
+    animation-duration: 0.6s;
+    animation-fill-mode: forwards;
+}
+
+.hide-text {
+    display: none;
+}
+
+.definition {
+    transform: rotateX(180deg);
+}
+
+.card-text {
+    position: relative;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: 100%;
+}
+
+.card-text-container {
+    position: relative;
+    height: 160px;
+    overflow-y: auto;
+    padding: 0 !important;
+}
+
+
+
+@media screen and (max-width: 600px) {
+    .card-text-container {
+        height: 100px;
+    }
+}
+
+@media screen and (max-height: 600px) {
+    .flashcard {
+        padding-block: 12.50%;
+    }
+}
+
+@media screen and (max-height: 400px) {
+    .flashcard {
+        padding-block: 8.75%;
+    }
+}
+
+
+
+@keyframes flipcard {
+    from { 
+        transform: rotateX(0deg);
+        perspective: 40%;
+        transform-style: preserve-3d;
+    }
+    to { 
+        transform: rotateX(180deg);
+        perspective: 40%;
+        transform-style: preserve-3d;
+    }
+}
+
+@keyframes flipcard-reverse {
+    from { 
+        transform: rotateX(180deg);
+        perspective: 40%;
+        transform-style: preserve-3d;
+    }
+    to { 
+        transform: rotateX(0deg);
+        perspective: 40%;
+        transform-style: preserve-3d;
+    }
+}
+
+@keyframes enter-right {
+    from {
+        left: 100vw;
+    }
+    to {
+        left: 0vw;
+    }
+}
+
+@keyframes enter-left {
+    from {
+        left: -100vw;
+    }
+    to {
+        left: 0vw;
+    }
+}

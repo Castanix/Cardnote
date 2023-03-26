@@ -1,25 +1,38 @@
-import './App.css';
-import React from 'react';
+import "./App.css";
+import React from "react";
+import CardSetListPage from "./pages/CardSetListPage/CardSetListPage";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CardSetPage from "./pages/CardSetPage/CardSetPage";
+import FlashcardsPage from "./pages/FlashcardsPage/FlashcardsPage";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import Topbar from "./components/Topbar/Topbar";
 
-const App = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src="./images/logo.svg" className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+export const queryClient = new QueryClient(
+	{ 
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+			}
+		} 
+	}
+);
+
+const App = () => {	
+	return (
+		<div className="App">
+			<BrowserRouter>
+				<QueryClientProvider client={ queryClient }>
+					<Routes>
+						<Route path="/" element={ <><Topbar /><CardSetListPage /></> } />
+						<Route path="/:cardSetName/:cardSetId" element={ <CardSetPage /> } />
+						<Route path="/:cardSetName/:cardSetId/flashcard" element={ <FlashcardsPage /> } />
+					</Routes>
+					<ReactQueryDevtools initialIsOpen={false} />
+				</QueryClientProvider>
+			</BrowserRouter>
+		</div>
+	);
+};
 
 export default App;

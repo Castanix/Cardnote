@@ -1,16 +1,16 @@
 {
     "compilerOptions": {
-        "outDir": "./build/", // If specified, .js (as well as .d.ts, .js.map, etc.) files will be emitted into this directory. Build folder contains compiled, but not prod-ready version of src. 
+        "outDir": "./build", // If specified, .js (as well as .d.ts, .js.map, etc.) files will be emitted into this directory. Build folder contains compiled, but not prod-ready version of src. 
         "noImplicitAny": true, // No fallbacks to 'any' types when no type annotations are present
-        "module": "ES6", // Compiler syntax that is used to use when compiling to JS 
+        "module": "ESNext", // Compiler syntax that is used to use when compiling to JS 
         "target": "ES6", // Compile into the targeted JS version (ES6)
-        "jsx": "react", // Emit .js files with JSX changed to the equivalent to React.createElement calls
+        "jsx": "react-jsx", // Emit .js files with JSX changed to the equivalent to React.createElement calls
         "allowJs": true, // Allow JS(X) files to be imported instead of pure TS(X) files
         "moduleResolution": "Node",
         "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
     },
-
     // "include": [
-    //     "./src/*/*"
-    //   ],
+    //     "src"
+    // ],
 }

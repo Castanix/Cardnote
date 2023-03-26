@@ -1,0 +1,33 @@
+.flashcard-container {
+    position: relative;
+    display: flex;
+    height: fit-content;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+.swap-card-button {
+    margin-block: auto;
+    font-size: 6rem;
+    fill: #d2d2d2;
+    z-index: 1;
+}
+
+.swap-card-container-mobile {
+    display: none !important;
+}
+
+.swap-card-button:hover {
+    fill: black;
+}
+
+@media screen and (max-width: 600px) {
+    .swap-card-button.pc {
+        display: none;
+    }
+
+    .swap-card-container-mobile {
+        display: flex;
+        justify-content: center;
+    }
+}
