@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node ./server.ts",
     "test": "jest --runInBand",
-    "setupDB": "ts-node ./db/runSetup.ts &"
+    "setupDB": "ts-node ./db/runSetup.ts &",
+    "build": "tsc -p ."
   },
   "author": "",
   "license": "ISC",
