@@ -1,4 +1,14 @@
-# Getting Started with Create React App
+# Cardnote
+
+Cardnote is a small flashcard/note taking application created for personal use.
+There is a public account shared by all other users to explore and use.
+
+This app is created using react and express and connected to a mysql cloud database.
+
+Front end hosted on [Netlify](https://cardnote.netlify.app/).
+Back end hosted on Render (Slow on startup, could take a couple minutes to boot up).
+Database through clever cloud.
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
