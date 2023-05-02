@@ -2,7 +2,10 @@
 module.exports = {
 	preset: "ts-jest",
 	testEnvironment: "jsdom",
-	transformIgnorePatterns: ["node_modules/(?!@uiw)/"],
+	transformIgnorePatterns: [
+		"node_modules/(?!@uiw)/", 
+		"node_modules/(?!react-markdown)/", 
+	],
 	transform: {
 		"^.+\\.ts?$": "ts-jest",
 		"^.+\\.(js|jsx)$": "babel-jest"

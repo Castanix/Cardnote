@@ -3,7 +3,7 @@ import { ListGroup, ListGroupItem, Button, Toast, ToastHeader, ToastBody, Input 
 import { CardType } from "../../pages/CardSetPage/CardSetPage";
 import DeleteCard from "./axios/DeleteCard";
 import UpdateCard from "./axios/UpdateCard";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import ReactMarkdown from "react-markdown";
 import SimpleMdeReact from "react-simplemde-editor";
 
 import "easymde/dist/easymde.min.css";
