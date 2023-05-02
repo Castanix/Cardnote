@@ -3,6 +3,7 @@ import { Card, CardBody } from "reactstrap";
 import { CardType } from "../../pages/CardSetPage/CardSetPage";
 
 import "./Flashcard.css";
+import ReactMarkdown from "react-markdown";
 
 
 /*
@@ -80,7 +81,7 @@ const Flashcard = ({ card }: { card: CardType }) => {
 			<CardBody className={ `card-text-container ${ showDefinition ? "definition" : "hide-text" }`
 			}>
 				<div className="card-text">
-					{ card.definition }
+					<ReactMarkdown>{ card.definition }</ReactMarkdown>
 				</div>
 			</CardBody>
 		</Card>
