@@ -5,8 +5,10 @@
 
 .card-term,
 .card-definition {
-    width: 50%;
+    width: 44%;
+    max-height: 250px;
     text-align: center;
+    overflow: auto;
 }
 
 .card-toolbar {

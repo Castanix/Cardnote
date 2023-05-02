@@ -3,6 +3,10 @@ import { ListGroup, ListGroupItem, Button, Toast, ToastHeader, ToastBody, Input 
 import { CardType } from "../../pages/CardSetPage/CardSetPage";
 import DeleteCard from "./axios/DeleteCard";
 import UpdateCard from "./axios/UpdateCard";
+import ReactMarkdown from "react-markdown";
+import SimpleMdeReact from "react-simplemde-editor";
+
+import "easymde/dist/easymde.min.css";
 
 export type DeleteCardType = {
 	card_id: number,
@@ -124,8 +128,8 @@ const CardListItem = ({ card, cardSet }: { card: CardType, cardSet: CardType[] }
 			</ListGroupItem>
 			<ListGroupItem className="card-definition">
 				{ editable 
-					? <Input value={ definitionValue } onChange={ (e) => setDefinitionValue(e.target.value) } />
-					: currDefinition
+					? <SimpleMdeReact value={ definitionValue } onChange={ (e) => setDefinitionValue(e) } />
+					: <ReactMarkdown>{ currDefinition }</ReactMarkdown>
 				}
 			</ListGroupItem>
 			<ListGroupItem className="card-toolbar divider-block">

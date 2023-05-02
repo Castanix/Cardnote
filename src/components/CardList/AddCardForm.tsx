@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Form, Row, Col, FormGroup, Label, Input, Accordion, AccordionHeader, AccordionBody, AccordionItem, Button } from "reactstrap";
 import { CardType } from "../../pages/CardSetPage/CardSetPage";
 import PostCard from "./axios/PostCard";
+import { SimpleMdeReact } from "react-simplemde-editor";
+
+import "easymde/dist/easymde.min.css";
 
 export type AddCardType = {
 	term: string,
@@ -80,14 +83,7 @@ const AddCardForm = ({ cardSetId, cardSet }: { cardSetId: number, cardSet: CardT
 									<Label for="cardDefinition">
 										Definition: 
 									</Label>
-									<Input 
-										id="cardDefinition" 
-										name="cardDefinition" 
-										type="textarea" 
-										placeholder="Enter Definition"
-										value={ definitionValue }
-										onChange={ (e) => setDefinitionValue(e.target.value) }
-									/>
+									<SimpleMdeReact value={ definitionValue } onChange={ (e) => setDefinitionValue(e) } />
 								</FormGroup>
 							</Col>
 						</Row>
